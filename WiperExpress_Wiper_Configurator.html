@@ -1,0 +1,1782 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>Wiper Express Wiper System Configurator</title>
+<style>
+:root{
+  /* Wiper Express — Light Brand Palette
+     Variable names preserved for compatibility; values mapped to WX brand */
+  --black:#0A1A2F;          /* Navy / primary ink */
+  --ink-2:#1E3A66;          /* Navy-500 */
+  --white:#fff;
+  --gold:#0057FF;           /* Electric Blue accent */
+  --gold-l:#4D85FF;         /* Lighter blue hover */
+  --gold-tint:#F4F8FF;      /* Blue mist (soft accent fill) */
+  --gold-d:#003FCC;         /* Darker blue */
+  --blue-soft:#E6EEFF;      /* Blue soft */
+  --mid:#5A6B82;            /* Muted ink */
+  --lt:#F4F6F9;             /* Light page bg */
+  --line:#E5E9F0;           /* Hairline */
+  --line-d:#D9E0EA;
+  --ok:#1E8E3E;
+  --warn:#B26A00;
+  --err:#C62828;
+  --r:10px;--r-sm:6px;
+  --shadow:0 1px 2px rgba(10,26,47,0.04),0 4px 12px rgba(10,26,47,0.06);
+  --shadow-md:0 4px 12px rgba(10,26,47,0.06),0 12px 28px rgba(10,26,47,0.08);
+  --shadow-blue:0 12px 36px rgba(0,87,255,0.18);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--lt);color:var(--black);
+  font-family:"Inter","SF Pro Display",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size:14px;line-height:1.55;min-height:100vh;-webkit-font-smoothing:antialiased}
+button,input,select{font-family:inherit}
+.mono{font-family:"SFMono-Regular",Menlo,Consolas,monospace}
+
+/* ── HEADER (Wiper Express light style) ── */
+.hdr{background:#fff;color:var(--black);border-bottom:1px solid var(--line);
+  position:sticky;top:0;z-index:100;box-shadow:0 1px 2px rgba(10,26,47,0.04)}
+.hdr-inner{max-width:1280px;margin:0 auto;padding:0 24px;display:flex;align-items:center;
+  height:68px;gap:20px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand svg{display:block}
+.brand-mark{width:38px;height:38px;background:var(--gold);border-radius:8px;
+  display:grid;place-items:center;color:#fff;font-weight:800;font-size:18px;
+  letter-spacing:-0.04em;box-shadow:0 4px 12px rgba(0,87,255,0.25)}
+.brand-name{font-weight:800;font-size:18px;letter-spacing:-0.01em;color:var(--black)}
+.brand-tag{color:var(--gold);font-size:9.5px;letter-spacing:2px;text-transform:uppercase;
+  margin-top:2px;font-weight:700}
+.hdr-divider{width:1px;height:28px;background:var(--line)}
+.hdr-nav{display:flex;align-items:center;gap:0;flex:1}
+.hdr-step{display:flex;align-items:center;gap:8px;background:none;border:0;color:var(--mid);
+  font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px;
+  padding:6px 12px;cursor:pointer;border-radius:6px;transition:.15s}
+.hdr-step:hover{color:var(--black);background:var(--lt)}
+.hdr-step.done{color:var(--ink-2)}
+.hdr-step.active{background:var(--blue-soft);color:var(--gold)}
+.hdr-step .num{width:22px;height:22px;border-radius:50%;background:var(--lt);
+  display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;
+  color:var(--mid)}
+.hdr-step.done .num{background:var(--gold);color:#fff}
+.hdr-step.active .num{background:var(--gold);color:#fff}
+.hdr-arr{color:var(--line-d);font-size:14px;padding:0 4px}
+.hdr-actions{display:flex;gap:8px;align-items:center}
+.market-toggle{display:flex;background:var(--lt);border:1px solid var(--line);border-radius:6px;overflow:hidden;padding:3px}
+.market-toggle button{background:none;border:0;color:var(--mid);font-size:11px;
+  font-weight:700;letter-spacing:1.1px;text-transform:uppercase;padding:7px 12px;cursor:pointer;border-radius:4px}
+.market-toggle button.active{background:var(--gold);color:#fff}
+.hdr-btn{background:var(--lt);color:var(--black);border:1px solid var(--line);padding:9px 14px;font-size:11px;
+  font-weight:700;letter-spacing:1.1px;text-transform:uppercase;cursor:pointer;border-radius:6px;transition:.15s}
+.hdr-btn:hover{background:var(--gold);color:#fff;border-color:var(--gold)}
+
+/* ── STEP BAND ── */
+.step-band{background:linear-gradient(180deg,#fff 0%,var(--lt) 100%);border-bottom:1px solid var(--line)}
+.step-band-inner{max-width:1280px;margin:0 auto;padding:22px 24px;display:flex;align-items:center;gap:20px}
+.step-num{width:44px;height:44px;border-radius:10px;background:var(--gold);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;
+  box-shadow:0 4px 12px rgba(0,87,255,0.25)}
+.step-titles h1{font-size:22px;font-weight:800;line-height:1.15;letter-spacing:-0.01em;color:var(--black)}
+.step-titles p{color:var(--mid);font-size:13px;margin-top:3px}
+.prog{margin-left:auto;display:flex;gap:4px}
+.pip{width:32px;height:4px;background:var(--line);border-radius:999px}
+.pip.done{background:var(--gold)}
+.pip.active{background:var(--ink-2)}
+
+/* ── PAGE LAYOUT ── */
+.page{max-width:1280px;margin:0 auto;padding:24px;display:grid;
+  grid-template-columns:1fr 320px;gap:24px;align-items:start}
+@media(max-width:980px){.page{grid-template-columns:1fr}.sidebar{display:none}}
+
+/* ── CARDS ── */
+.card{background:var(--white);border:1px solid var(--line);border-radius:14px;
+  padding:24px 26px;margin-bottom:14px;box-shadow:var(--shadow)}
+.card-hd{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;
+  color:var(--black);margin-bottom:14px;display:flex;align-items:center;gap:10px;
+  padding-bottom:12px;border-bottom:1px solid var(--line)}
+.card-hd .badge{margin-left:auto;font-size:10px;padding:4px 9px;background:var(--blue-soft);
+  color:var(--gold);border-radius:999px;letter-spacing:.5px;font-weight:800}
+
+/* ── HELP / NOTICE ── */
+.help{background:var(--gold-tint);border-left:3px solid var(--gold);padding:13px 16px;
+  margin-bottom:14px;font-size:12.5px;color:var(--ink-2);line-height:1.6;border-radius:8px}
+.help b{color:var(--black)}
+.help.warn{background:#FDECEC;border-left-color:var(--err);color:#7A1F1F}
+.help.tip{background:#E8F5EC;border-left-color:var(--ok);color:#1B5E20}
+
+/* ── REASON CODES ── */
+.reason{font-size:11px;color:var(--mid);margin-top:4px;font-style:italic}
+.reason.match{color:var(--ok);font-weight:600}
+.reason.warn{color:var(--warn);font-weight:600}
+
+/* ── INPUTS ── */
+.fields{display:grid;gap:14px}
+.f2{grid-template-columns:1fr 1fr}
+.f3{grid-template-columns:1fr 1fr 1fr}
+@media(max-width:680px){.f2,.f3{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--mid)}
+.field input,.field select{padding:11px 13px;border:1.5px solid var(--line);border-radius:8px;
+  background:#fff;font-size:14px;color:var(--black);transition:.15s}
+.field input:focus,.field select:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(0,87,255,0.12)}
+.field .row{display:flex;align-items:center;gap:8px}
+.field .u{color:var(--mid);font-size:13px;width:32px;font-weight:600}
+.unit-toggle{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--lt);padding:3px}
+.unit-toggle button{background:transparent;color:var(--mid);border:0;padding:7px 14px;font-weight:700;
+  font-size:12px;cursor:pointer;letter-spacing:.5px;border-radius:6px;transition:.15s}
+.unit-toggle button.active{background:var(--gold);color:#fff}
+.seg{display:flex;border:1.5px solid var(--line);border-radius:8px;overflow:hidden;background:#fff}
+.seg button{flex:1;background:#fff;border:0;padding:10px;cursor:pointer;font-size:13px;
+  font-weight:600;color:var(--mid);transition:.15s}
+.seg button.active{background:var(--gold);color:#fff}
+
+/* ── OPTION CARDS ── */
+.opt-grid{display:grid;gap:10px}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:1fr 1fr 1fr}
+.g4{grid-template-columns:1fr 1fr 1fr 1fr}
+@media(max-width:780px){.g3,.g4{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.opt{border:1.5px solid var(--line);border-radius:10px;padding:14px 16px;cursor:pointer;
+  background:var(--white);transition:.15s;position:relative}
+.opt:hover{border-color:var(--gold);color:var(--black)}
+.opt.sel{border-color:var(--gold);background:var(--gold-tint);box-shadow:0 0 0 4px rgba(0,87,255,0.10)}
+.opt.dimmed{opacity:0.4;pointer-events:none}
+.opt.recommended::after{content:"PRE-SELECTED";position:absolute;top:8px;right:8px;
+  font-size:9px;font-weight:800;letter-spacing:1px;background:var(--gold);color:#fff;
+  padding:3px 7px;border-radius:999px}
+.opt-title{font-size:14px;font-weight:700;color:var(--black);display:flex;align-items:center;
+  justify-content:space-between;gap:8px}
+.opt-desc{font-size:12px;color:var(--mid);margin-top:4px;line-height:1.5}
+.opt-pn{display:inline-block;font-family:"SFMono-Regular",Menlo,Consolas,monospace;font-size:11px;
+  background:var(--blue-soft);border:1px solid var(--blue-soft);padding:3px 8px;border-radius:6px;
+  color:var(--gold);margin-top:8px;font-weight:700}
+
+/* Big motor cards */
+.motor-card{border:1.5px solid var(--line);border-radius:12px;padding:20px 22px;
+  cursor:pointer;background:#fff;transition:.15s;position:relative}
+.motor-card:hover{border-color:var(--gold);box-shadow:var(--shadow)}
+.motor-card.sel{border-color:var(--gold);background:var(--gold-tint);
+  box-shadow:0 0 0 4px rgba(0,87,255,0.10)}
+.motor-card.recommended::after{content:"RECOMMENDED";position:absolute;top:12px;right:12px;
+  font-size:9.5px;font-weight:800;letter-spacing:1.2px;background:var(--gold);color:#fff;
+  padding:4px 10px;border-radius:999px;box-shadow:0 4px 12px rgba(0,87,255,0.25)}
+.motor-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px;padding-right:120px}
+.motor-name{font-size:16px;font-weight:800;color:var(--black);letter-spacing:-0.01em}
+.motor-desc{font-size:12.5px;color:var(--mid);margin-top:4px;line-height:1.6}
+.motor-specs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:14px}
+.ms{background:var(--lt);border-radius:8px;padding:9px 12px;border:1px solid var(--line)}
+.motor-card.sel .ms{background:rgba(255,255,255,0.7);border-color:var(--blue-soft)}
+.ms-k{font-size:9.5px;color:var(--mid);text-transform:uppercase;letter-spacing:1px;font-weight:700}
+.ms-v{font-size:13px;font-weight:800;margin-top:3px;color:var(--black)}
+
+/* ── ANGLE PILLS ── */
+.angle-grid{display:flex;flex-wrap:wrap;gap:8px}
+.angle-pill{padding:9px 18px;border-radius:999px;border:1.5px solid var(--line);font-size:14px;
+  font-weight:700;cursor:pointer;background:#fff;color:var(--mid);transition:.15s}
+.angle-pill:hover{border-color:var(--gold);color:var(--gold)}
+.angle-pill.sel{background:var(--gold);border-color:var(--gold);color:#fff}
+.angle-pill.recommended{border-color:var(--gold);box-shadow:0 0 0 3px rgba(0,87,255,0.15);color:var(--gold)}
+.angle-pill.recommended.sel{color:#fff}
+
+/* ── DIAGRAM ── */
+.diagram-wrap{background:var(--lt);border:1px solid var(--line);border-radius:10px;padding:16px}
+.diagram-wrap svg{width:100%;height:auto;display:block;max-height:340px}
+.diagram-spec{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;font-size:12px}
+.diagram-spec .k{font-size:9.5px;text-transform:uppercase;letter-spacing:1px;color:var(--mid);font-weight:700}
+.diagram-spec .v{font-size:14px;font-weight:800;margin-top:2px;color:var(--black)}
+
+/* ── SELECTOR RESULT CARDS ── */
+.results-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:1100px){.results-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:720px){.results-grid{grid-template-columns:1fr}}
+.result-card{background:#fff;border:1.5px solid var(--line);border-radius:12px;overflow:hidden;
+  display:flex;flex-direction:column;cursor:pointer;transition:.15s}
+.result-card:hover{border-color:var(--gold);box-shadow:var(--shadow)}
+.result-card.sel{border-color:var(--gold);box-shadow:0 0 0 4px rgba(0,87,255,0.12)}
+.result-card.recommended .rc-head{background:var(--gold);color:#fff}
+.result-card.recommended .rc-head .pct{color:rgba(255,255,255,0.92)}
+.rc-head{background:var(--black);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.rc-head .name{font-weight:800;letter-spacing:1px;text-transform:uppercase;font-size:13px}
+.rc-head .pct{color:var(--gold-l);font-weight:700;font-size:12px}
+.rc-body{padding:14px;background:var(--lt);border-bottom:1px solid var(--line)}
+.rc-specs{padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;font-size:12px;flex:1}
+.rc-spec .k{font-size:9.5px;letter-spacing:1px;text-transform:uppercase;color:var(--mid);font-weight:700}
+.rc-spec .v{font-weight:800;font-size:13px;margin-top:2px;color:var(--black)}
+.rc-sys{padding:11px 16px;background:var(--gold-tint);border-top:1px solid var(--line);
+  display:flex;justify-content:space-between;align-items:center;font-size:12px}
+.rc-sys .lbl{font-size:9.5px;letter-spacing:1px;text-transform:uppercase;color:var(--ink-2);font-weight:700}
+.rc-sys .val{font-weight:800;font-size:13px;color:var(--gold)}
+.rc-sys.warn{background:#FDECEC}
+.rc-sys.warn .val{color:var(--err)}
+.rc-pick{padding:11px 14px;background:var(--ink-2);color:#fff;text-align:center;
+  font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase}
+.result-card.sel .rc-pick{background:var(--gold);color:#fff}
+
+/* ── BOM TABLE ── */
+.bom{width:100%;border-collapse:collapse;font-size:13px}
+.bom th{text-align:left;padding:11px 14px;background:var(--lt);font-size:10px;font-weight:800;
+  text-transform:uppercase;letter-spacing:1.2px;color:var(--mid);border-bottom:1px solid var(--line)}
+.bom td{padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+.bom tr:last-child td{border-bottom:none}
+.bom-pn{font-family:"SFMono-Regular",Menlo,Consolas,monospace;font-size:12.5px;font-weight:700;color:var(--gold)}
+.bom-role{font-weight:800;color:var(--black);font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+.bom-note{font-size:11px;color:var(--mid);margin-top:2px;line-height:1.5}
+
+/* ── PN BUILDER ── */
+.pn-builder{background:linear-gradient(135deg,var(--black) 0%,var(--ink-2) 100%);color:#fff;
+  border-radius:14px;padding:24px 26px;margin-bottom:14px;
+  box-shadow:var(--shadow-blue);position:relative;overflow:hidden}
+.pn-builder::before{content:"";position:absolute;top:0;right:0;width:200px;height:200px;
+  background:radial-gradient(circle,rgba(0,87,255,0.35),transparent 65%);pointer-events:none}
+.pn-builder-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;
+  color:var(--gold-l);margin-bottom:16px;position:relative;z-index:1}
+.pn-segs{display:flex;flex-wrap:wrap;gap:5px;align-items:flex-end;margin-bottom:14px;position:relative;z-index:1}
+.pn-seg{display:flex;flex-direction:column;align-items:center;gap:4px}
+.pn-seg-v{font-family:"SFMono-Regular",Menlo,Consolas,monospace;font-size:17px;font-weight:600;
+  background:rgba(255,255,255,0.08);color:#E8EEFF;padding:8px 13px;border-radius:6px;
+  min-width:36px;text-align:center;border:1px solid rgba(255,255,255,0.12)}
+.pn-seg-v.hi{background:rgba(0,87,255,0.30);border-color:rgba(0,87,255,0.55);color:#BFD3FF}
+.pn-seg-l{font-size:9px;color:rgba(255,255,255,0.5);text-align:center;max-width:64px;
+  line-height:1.3;letter-spacing:.5px;text-transform:uppercase;font-weight:700}
+.pn-sep{font-family:"SFMono-Regular",Menlo,Consolas,monospace;font-size:17px;
+  color:rgba(255,255,255,0.3);padding-bottom:20px}
+.pn-full{font-family:"SFMono-Regular",Menlo,Consolas,monospace;font-size:22px;font-weight:700;
+  color:#fff;background:rgba(0,87,255,0.18);padding:16px 20px;border-radius:8px;
+  border:1px solid rgba(0,87,255,0.4);letter-spacing:1px;word-break:break-all;position:relative;z-index:1}
+
+/* ── SPECS GRID ── */
+.spec-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:680px){.spec-grid{grid-template-columns:1fr 1fr}}
+.spec-tile{background:var(--lt);border-radius:10px;padding:12px 14px;border:1px solid var(--line)}
+.spec-k{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--mid);margin-bottom:4px}
+.spec-v{font-size:15px;font-weight:800;color:var(--black);letter-spacing:-0.01em}
+
+/* ── WIRING ── */
+.wire-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.wire-row:last-child{border-bottom:none}
+.wire-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;border:1px solid rgba(0,0,0,0.15)}
+.wire-func{font-size:13px}
+
+/* ── SIDEBAR ── */
+.sidebar{position:sticky;top:88px}
+.sb-card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;
+  box-shadow:var(--shadow)}
+.sb-hdr{background:linear-gradient(135deg,var(--black) 0%,var(--ink-2) 100%);padding:16px 20px;position:relative;overflow:hidden}
+.sb-hdr::before{content:"";position:absolute;top:-40px;right:-40px;width:120px;height:120px;
+  background:radial-gradient(circle,rgba(0,87,255,0.35),transparent 65%);pointer-events:none}
+.sb-hdr-title{color:#fff;font-weight:800;font-size:14px;letter-spacing:-0.01em;position:relative;z-index:1}
+.sb-hdr-sub{font-size:10px;color:var(--gold-l);margin-top:3px;letter-spacing:1.8px;text-transform:uppercase;font-weight:800;position:relative;z-index:1}
+.sb-section{padding:14px 18px;border-bottom:1px solid var(--line)}
+.sb-section:last-child{border-bottom:none}
+.sb-label{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(--mid);margin-bottom:10px}
+.sb-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px;font-size:12px}
+.sb-row:last-child{margin-bottom:0}
+.sb-k{color:var(--mid)}
+.sb-v{font-weight:700;color:var(--black);text-align:right}
+.sb-pn{font-family:"SFMono-Regular",Menlo,Consolas,monospace;font-size:11px;color:var(--gold);
+  background:var(--blue-soft);padding:2px 8px;border-radius:6px;font-weight:700}
+.sb-empty{font-size:12px;color:var(--mid);font-style:italic;text-align:center;padding:6px 0}
+.sb-status{padding:14px 18px;background:var(--lt);display:flex;align-items:center;gap:10px;font-size:12px;font-weight:700}
+.sb-dot{width:8px;height:8px;border-radius:50%}
+
+/* ── BUTTONS ── */
+.nav-row{display:flex;gap:10px;margin-top:20px;align-items:center;flex-wrap:wrap}
+.btn{padding:12px 24px;border-radius:8px;font-size:13px;font-weight:700;border:0;
+  letter-spacing:0.5px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+  transition:.15s;font-family:inherit}
+.btn-primary{background:var(--gold);color:#fff;box-shadow:0 4px 12px rgba(0,87,255,0.25)}
+.btn-primary:hover{background:var(--gold-d);transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,87,255,0.30)}
+.btn-primary:disabled{background:var(--line);color:var(--mid);cursor:not-allowed;box-shadow:none;transform:none}
+.btn-ghost{background:#fff;color:var(--black);border:1.5px solid var(--line)}
+.btn-ghost:hover{background:var(--lt);border-color:var(--ink-2)}
+.btn-print{background:var(--ink-2);color:#fff;border:1.5px solid var(--ink-2)}
+.btn-print:hover{background:var(--black);border-color:var(--black)}
+.btn-reset{background:none;border:0;color:var(--mid);font-size:11px;padding:8px;
+  letter-spacing:1px;text-transform:uppercase;font-weight:700;margin-left:auto;cursor:pointer;font-family:inherit}
+.btn-reset:hover{color:var(--gold)}
+
+/* ── INTRO TWO-PATH ── */
+.intro-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:8px 0}
+@media(max-width:760px){.intro-grid{grid-template-columns:1fr}}
+.intro-card{background:#fff;border:1.5px solid var(--line);border-radius:14px;
+  padding:36px 30px;cursor:pointer;transition:.18s;position:relative;text-align:left;
+  display:flex;flex-direction:column;overflow:hidden}
+.intro-card:hover{border-color:var(--gold);box-shadow:var(--shadow-md);transform:translateY(-3px)}
+.intro-card::before{content:"";position:absolute;top:0;left:0;right:0;height:5px;background:var(--gold);
+  border-radius:14px 14px 0 0}
+.intro-icon{font-size:44px;line-height:1;margin-bottom:18px}
+.intro-card h3{font-size:24px;font-weight:800;line-height:1.15;margin-bottom:10px;letter-spacing:-0.02em;color:var(--black)}
+.intro-card p{color:var(--mid);font-size:14px;line-height:1.6;margin-bottom:24px;flex:1}
+.intro-cta{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--gold);padding-top:14px;border-top:1px solid var(--line)}
+.intro-card:hover .intro-cta{color:var(--gold-d)}
+.intro-card .intro-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:800;
+  letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;
+  background:var(--blue-soft);padding:5px 11px;border-radius:999px;align-self:flex-start}
+
+/* ── PRINT ── */
+@media print{
+  .hdr,.step-band,.sidebar,.nav-row,.market-toggle,.hdr-actions,.btn{display:none!important}
+  body{background:#fff}
+  .page{display:block;max-width:100%;padding:0}
+  .card{box-shadow:none;border:1px solid var(--line);break-inside:avoid;page-break-inside:avoid}
+  .pn-builder{background:#fff;color:var(--black);border:2px solid var(--black);box-shadow:none}
+  .pn-builder::before{display:none}
+  .pn-builder-title,.pn-seg-l{color:var(--mid)}
+  .pn-seg-v,.pn-seg-v.hi{background:var(--lt);color:var(--black);border:1px solid var(--line)}
+  .pn-full{background:#fff;color:var(--black);border:2px solid var(--gold)}
+  .print-only{display:block!important}
+}
+.print-only{display:none}
+.print-only header{padding:18px 0 12px;border-bottom:3px solid var(--gold);margin-bottom:18px}
+.print-only .pheader{display:flex;justify-content:space-between;align-items:flex-end}
+.print-only h1{font-size:26px;font-weight:800;letter-spacing:-0.01em;color:var(--black)}
+.print-only .psub{color:var(--mid);font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:700}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr"><div class="hdr-inner">
+  <a class="brand" href="#" style="text-decoration:none">
+    <div class="brand-mark" aria-hidden="true">WX</div>
+    <div>
+      <div class="brand-name">Wiper Express</div>
+      <div class="brand-tag">Aftermarket Wiper Specialists</div>
+    </div>
+  </a>
+  <div class="hdr-divider"></div>
+  <nav class="hdr-nav" id="hdrNav"></nav>
+  <div class="hdr-actions">
+    <span style="font-size:11px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:var(--mid);margin-right:8px">5 Motor Systems · Unified Catalog</span>
+    <button class="hdr-btn" onclick="resetAll()">Start Over</button>
+  </div>
+</div></header>
+
+<!-- STEP BAND -->
+<div class="step-band"><div class="step-band-inner">
+  <div class="step-num" id="stepNum">1</div>
+  <div class="step-titles">
+    <h1 id="stepTitle">Start with the Windshield</h1>
+    <p id="stepDesc">Enter the windshield dimensions to compute the recommended wiper system.</p>
+  </div>
+  <div class="prog" id="prog"></div>
+</div></div>
+
+<!-- PAGE -->
+<div class="page">
+  <main class="content" id="root"></main>
+  <aside class="sidebar">
+    <div class="sb-card">
+      <div class="sb-hdr">
+        <div class="sb-hdr-title">Your System</div>
+        <div class="sb-hdr-sub">Wiper System Builder</div>
+      </div>
+      <div id="sidebarBody"></div>
+      <div class="sb-status" id="sidebarStatus">
+        <div class="sb-dot" style="background:var(--mid)"></div>
+        <span style="color:var(--mid)">Begin selecting to build your system</span>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   1. WIPER SYSTEM SOLVERS (bit-exact port of Configurator v1.2)
+   ═══════════════════════════════════════════════════════════════ */
+const {PI,sin,cos,tan,atan,asin,sqrt,abs}=Math;
+const D2R=PI/180,R2D=180/PI,MM_PER_IN=25.4;
+const MROUND=(v,m)=>Math.round(v/m)*m;
+const FLOORM=(v,m)=>Math.floor(v/m)*m;
+
+function solveRadial(W,H,d,t,flat){
+  const load=flat?10:15;
+  const ratio=(W-2*t)/(2*H+2*d-2*t);
+  let theta_deg=(ratio>=-1&&ratio<=1)?2*asin(ratio)*R2D:108*PI/180;
+  const t4=(H+d-t)-(H+d-t)*sqrt(1-(W-2*t)**2/(2*H+2*d-2*t)**2);
+  const theta2=theta_deg/2;
+  const Htheta=(H-2*t-t4)/cos(theta2*D2R);
+  const L=H+d-Htheta/2-t;
+  const Atheta=theta2/360*2*PI*((L+Htheta/2)**2-(L-Htheta/2)**2);
+  const ArmL=MROUND(L-10,50);
+  const BladeL=FLOORM(Htheta-10,50);
+  const Angle=FLOORM(theta_deg,5);
+  const Torque=5.03*ArmL/1000*(load*BladeL/1000)*sin(theta2*D2R)*1.15;
+  return {ArmL,BladeL,Angle,Torque,Pivot:W/2,pct:Atheta/(W*H),
+    geom:{kind:"radial",W,H,d,t,L,Htheta,theta_deg,pivotX:W/2,pivotY:d}};
+}
+function solvePanto(W,H,_d,t,flat){
+  const d=50.8,load=flat?10:15;
+  const inner=(8*H*H+16*d*H-32*d*t-16*H*t)/(9*(2*d*H/27+2*d*d/27+H*H/54));
+  let t2=(-sqrt(inner)+W/(d/3+H/6))*(d/6+H/12);
+  if(t2<12.7) t2=12.7;
+  const L=((W/2-t2)**2+(H+2*d)**2)/(2*H+4*d);
+  const Htheta=2*(H+d-L-t),Wtheta=W-2*t2;
+  const theta_deg=2*asin((Wtheta/2)/L)*R2D,theta2=theta_deg/2;
+  const ArmL=MROUND(L-10,50);
+  const BladeL=FLOORM(Htheta-10,50);
+  const Angle=Math.min(90,FLOORM(theta_deg,5));
+  const Torque=5.03*ArmL/1000*(load*BladeL/1000)*sin(theta2*D2R)*1.15;
+  return {ArmL,BladeL,Angle,Torque,Pivot:W/2,pct:(Htheta*Wtheta)/(W*H),
+    geom:{kind:"panto",W,H,d,t,L,Htheta,Wtheta,theta_deg,pivotX:W/2,pivotY:d}};
+}
+function solveBentRadial(W,H,d,t,flat){
+  const load=flat?10:15;
+  const pfit=4.31818181885147e-14*W**4-2.36944444469514e-10*W**3+5.15028787913284e-07*W*W-0.000554184603195052*W+0.443093391778803;
+  const t3=pfit*W;
+  const y0=d+t;
+  const val1=sqrt(((-(W-t3)+t)**2)+((d+t)**2));
+  let x0=(val1>H-t)?(-(W-t3)+t)+(val1-H+t):-(W-t3)+t;
+  const x1=t3-t,theta2=atan(abs(y0)/abs(x0)),r1=sqrt(x0*x0+y0*y0);
+  const y1=sqrt(r1*r1-x1*x1);
+  const x2=r1*cos(PI-theta2-95*D2R),y2=r1*sin(PI-theta2-95*D2R),x3=x2;
+  const tan85=tan(85*D2R),b1=y1-tan85*x1,y4=d+t,x4=(y4-b1)/tan85,r2=sqrt(x4*x4+y4*y4);
+  const y3=sqrt(r2*r2-x3*x3),LB=y2-y3;
+  const x7=r1*cos(PI-theta2-5*D2R),y7=r1*sin(PI-theta2-5*D2R);
+  const LA=sqrt((x7+LB/2)**2+y7*y7);
+  const ArmL=MROUND(LA-10,50);
+  const BladeL=FLOORM(LB-10,50);
+  const Torque=5.03*ArmL/1000*(BladeL/1000)*load*sin(90*D2R)*1.15;
+  const thetaA1=PI-2*atan(abs(y0)/abs(x0*2));
+  const thetaA2=PI-2*atan(abs(x1)/abs(y1*2));
+  const E191=0.5*(thetaA1-sin(thetaA1))*r1*r1;
+  const E192=0.5*(thetaA2-sin(thetaA2))*r1*r1;
+  const a1=E191/2,a2=(PI*r1*r1/2-E192)/2;
+  const WipedArea=a1+a2-x1*y4;
+  return {ArmL,BladeL,Angle:90,Torque,Pivot:t3,pct:WipedArea/(W*H),
+    geom:{kind:"bent",W,H,d,t,LA,LB,t3,pivotX:W-t3,pivotY:d}};
+}
+
+/* Lookup tables (v1.2): which motor family fits given arm/blade in 50mm steps */
+const TBL={
+  Single:[0,1,2,3,4,5,6,7].reduce((a,_,i)=>{a[i]="11111111".padEnd(24,"0");return a},Array(24).fill("0".repeat(24))),
+  WWF:Array.from({length:24},(_,i)=>{
+    if(i<=7) return "111111111111".padEnd(24,"0");
+    if(i==8) return "111111111110".padEnd(24,"0");
+    if(i==9) return "111111111100".padEnd(24,"0");
+    if(i==10) return "111111111000".padEnd(24,"0");
+    if(i==11) return "111111110000".padEnd(24,"0");
+    return "0".repeat(24);
+  }),
+  Unitized:Array.from({length:24},(_,i)=>i<16?"111111111111111100000000":"0".repeat(24))
+};
+function lookupSystem(_solver,armMM,bladeMM){
+  const ai=Math.round(armMM/50)-1, bi=Math.round(bladeMM/50)-1;
+  if(ai<0||ai>23||bi<0||bi>23) return "Out of range";
+  for(const f of ["Single","WWF","Unitized"]){
+    if(TBL[f][ai] && TBL[f][ai][bi]==="1"){
+      return ({Single:"Single Speed",WWF:"WWF",Unitized:"Unitized/CD"})[f];
+    }
+  }
+  return _solver==="Panto"?"Dual Drive":"Not Recommended";
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   2. CATALOGS  (Marine + HD/Commercial)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── 5 motor systems, ordered by capacity ── */
+const MOTOR_ORDER = ['4R','4A','4RCE','MD','DD'];
+
+/* Family → motor mapping. 4R Builder uses HD-style series blades; the rest use marine SS blades. */
+const FAMILY_TO_MOTOR = {
+  "Single Speed":"4A",
+  "WWF":"4R",
+  "Unitized/CD":"MD",
+  "Dual Drive":"DD"
+};
+
+const MOTORS = {
+  '4R':{ name:'4R WWF Motor', badge:'Two-Speed · Non-CE', torque:'~25 Nm',
+    low:'35 sw/min', high:'55 sw/min', shaftType:'½" Drum',
+    shaftOptions:['1.5in','2.5in','3.5in'], fusing:'12A (12v) / 7A (24v)',
+    park:'Coast-to-Park', maxBladeMM:600, segment:'HD / Commercial',
+    desc:'Standard two-speed 4R for HD trucks, buses, ag cabs. Self-contained oscillating motor, no external linkage.',
+    wiring:[{c:'#e53935',f:'High speed'},{c:'#43a047',f:'Low speed'},{c:'#ffffff',f:'Ground',bdr:true},{c:'#fdd835',f:'Park'}],
+    bladeMode:'series',  // HD series + length picker
+    buildPN:s=>{const m={'1.5in':'1','2.5in':'2','3.5in':'3'};const sw=s.switchInstalled?'.19S2':'';
+      return `4R${m[s.shaft]||'2'}.${s.voltage==='12v'?'12':'24'}${sw}.${s.park==='right'?'R':'L'}${String(s.sweep||110).padStart(3,'0')}D`} },
+
+  '4A':{ name:'4A Sealed Marine Motor', badge:'IP66 · Sealed · CE', torque:'~30 Nm',
+    low:'40 sw/min', high:'60 sw/min', shaftType:'½" Drum',
+    shaftOptions:['1.5in','2.5in','3.5in'], fusing:'12A (12v) / 7A (24v)',
+    park:'Coast-to-Park', maxBladeMM:600, segment:'Marine',
+    desc:'Most-installed marine motor. IP66 sealed, CE certified. Drives arms to 24″/600mm. Recommended for helm and bridge windows.',
+    wiring:[{c:'#e53935',f:'Park'},{c:'#43a047',f:'Low speed'},{c:'#ffffff',f:'Ground',bdr:true},{c:'#1e88e5',f:'High speed'}],
+    bladeMode:'list',
+    buildPN:s=>{const m={'1.5in':'1','2.5in':'2','3.5in':'3'};const c=s.color==='black'?'B':'';
+      return `4A${m[s.shaft]||'2'}.${s.voltage==='12v'?'12':'24'}.${s.park==='right'?'R':'L'}${String(s.sweep||110).padStart(3,'0')}CE${c}`} },
+
+  '4RCE':{ name:'4RCE WWF Motor (CE-Certified)', badge:'Two-Speed · CE · Marine', torque:'~25 Nm',
+    low:'35 sw/min', high:'55 sw/min', shaftType:'½" Drum',
+    shaftOptions:['1.5in','2.5in','3.5in'], fusing:'12A (12v) / 7A (24v)',
+    park:'Coast-to-Park', maxBladeMM:600, segment:'Marine / EU',
+    desc:'CE-certified 4R WWF for marine and European markets. Same mechanical envelope as the 4R, with full CE marking and saltwater-rated finish.',
+    wiring:[{c:'#e53935',f:'High speed'},{c:'#43a047',f:'Low speed'},{c:'#ffffff',f:'Ground',bdr:true},{c:'#fdd835',f:'Park'}],
+    bladeMode:'list',
+    buildPN:s=>{const m={'1.5in':'1','2.5in':'2','3.5in':'3'};
+      return `4R${m[s.shaft]||'2'}.${s.voltage==='12v'?'12':'24'}.${s.park==='right'?'R':'L'}${String(s.sweep||110).padStart(3,'0')}CE`} },
+
+  'MD':{ name:'Marine Compact Drive', badge:'32 Nm · DIN', torque:'32 Nm',
+    low:'40 sw/min', high:'60 sw/min', shaftType:'DIN A12xM8',
+    shaftOptions:['1in','1.25in','2in','2.5in','3in'], fusing:'12A min',
+    park:'Dynamic or Coast-to-Park', maxBladeMM:800, segment:'Marine',
+    desc:'32 Nm compact drive for arms 20–32″. Wipe angle field-adjustable 40–108°. DIN shaft. Most flexible motor in the line.',
+    wiring:[{c:'#333',f:'Park',bdr:true},{c:'#e53935',f:'High speed'},{c:'#43a047',f:'Low speed'},{c:'#795548',f:'Ground'},{c:'#1e88e5',f:'Switch'}],
+    bladeMode:'list',
+    buildPN:s=>{const m={'1in':'1','2in':'2','3in':'3','1.25in':'4','2.5in':'5'};const v=s.voltage==='12v'?'12':'24';
+      const pk=s.park==='right'?'R':'L',pc=s.parkCircuit==='dynamic'?'D':'C',sw=String(s.sweep||80).padStart(3,'0');
+      return `MD${m[s.shaft]||'2'}.${v}${pc}.${pk}${sw}`} },
+
+  'DD':{ name:'Marine Dual Drive', badge:'56 Nm · Heavy', torque:'56 Nm',
+    low:'40 sw/min', high:'60 sw/min', shaftType:'DIN A12xM8',
+    shaftOptions:['1in','1.25in','2in','2.5in','3in'], fusing:'20A min',
+    park:'Dynamic', maxBladeMM:1000, segment:'Marine',
+    desc:'56 Nm dual-drive for arms 32–40″. Drives both pivots simultaneously. For the largest pantograph systems and bridge windows.',
+    wiring:[{c:'#333',f:'Park',bdr:true},{c:'#e53935',f:'High speed'},{c:'#43a047',f:'Low speed'},{c:'#795548',f:'Ground'},{c:'#1e88e5',f:'Switch'}],
+    bladeMode:'list',
+    buildPN:s=>{const m={'1in':'1','2in':'2','3in':'3','1.25in':'4','2.5in':'5'};const v=s.voltage==='12v'?'12':'24';
+      const pk=s.park==='right'?'R':'L',sw=String(s.sweep||80).padStart(3,'0');
+      return `DD${m[s.shaft]||'2'}.${v}D.${pk}${sw}x`} }
+};
+
+/* Arm catalog keyed by motor + arm type. 4R uses HD arms; marine motors use DS-suffix arms */
+const ARMS = {
+  '4R-radial':[{pn:'200722',len:'8–11"',mm:'201–280',minMM:201,maxMM:280},
+    {pn:'200714',len:'11–14"',mm:'280–350',minMM:280,maxMM:350},
+    {pn:'200717',len:'14–18"',mm:'350–450',minMM:350,maxMM:450},
+    {pn:'200718',len:'20–24"',mm:'500–600',minMM:500,maxMM:600}],
+  '4R-panto':[{pn:'200715',len:'14–18"',mm:'350–450',minMM:350,maxMM:450},
+    {pn:'200716',len:'20–24"',mm:'500–600',minMM:500,maxMM:600}],
+
+  '4A-radial':[{pn:'200722DS',len:'8–11"',mm:'201–280',minMM:201,maxMM:280},
+    {pn:'201211DS',len:'11–14"',mm:'280–350',minMM:280,maxMM:350},
+    {pn:'200720DS',len:'11–14"',mm:'280–350',minMM:280,maxMM:350,swivel:true},
+    {pn:'200704DS',len:'14–18"',mm:'250–450',minMM:250,maxMM:450,swivel:true},
+    {pn:'200705DS',len:'18–22"',mm:'450–550',minMM:450,maxMM:550,swivel:true},
+    {pn:'200706DS',len:'20–24"',mm:'500–600',minMM:500,maxMM:600,swivel:true}],
+  '4A-panto':[{pn:'200733DS',len:'11–14"',mm:'280–350',minMM:280,maxMM:350},
+    {pn:'200701DS',len:'14–18"',mm:'350–450',minMM:350,maxMM:450},
+    {pn:'200703DS',len:'20–24"',mm:'500–600',minMM:500,maxMM:600}],
+
+  '4RCE-radial':[{pn:'200722DS',len:'8–11"',mm:'201–280',minMM:201,maxMM:280},
+    {pn:'201211DS',len:'11–14"',mm:'280–350',minMM:280,maxMM:350},
+    {pn:'200720DS',len:'11–14"',mm:'280–350',minMM:280,maxMM:350,swivel:true},
+    {pn:'200704DS',len:'14–18"',mm:'250–450',minMM:250,maxMM:450,swivel:true},
+    {pn:'200705DS',len:'18–22"',mm:'450–550',minMM:450,maxMM:550,swivel:true},
+    {pn:'200706DS',len:'20–24"',mm:'500–600',minMM:500,maxMM:600,swivel:true}],
+  '4RCE-panto':[{pn:'200733DS',len:'11–14"',mm:'280–350',minMM:280,maxMM:350},
+    {pn:'200701DS',len:'14–18"',mm:'350–450',minMM:350,maxMM:450},
+    {pn:'200703DS',len:'20–24"',mm:'500–600',minMM:500,maxMM:600}],
+
+  'MD-radial':[{pn:'200711DS',len:'20–24"',mm:'500–600',minMM:500,maxMM:600,swivel:true},
+    {pn:'2012132DS',len:'26–32"',mm:'650–800',minMM:650,maxMM:800}],
+  'MD-panto':[{pn:'200708DS',len:'20–24"',mm:'500–600',minMM:500,maxMM:600},
+    {pn:'200712DS',len:'26–32"',mm:'650–800',minMM:650,maxMM:800}],
+
+  'DD-radial':[{pn:'200708DS',len:'20–24"',mm:'500–600',minMM:500,maxMM:600},
+    {pn:'200712DS',len:'26–32"',mm:'650–800',minMM:650,maxMM:800},
+    {pn:'200713DS',len:'32–36"',mm:'800–900',minMM:800,maxMM:900},
+    {pn:'200719DS',len:'38–40"',mm:'950–1000',minMM:950,maxMM:1000}],
+  'DD-panto':[{pn:'200708DS',len:'20–24"',mm:'500–600',minMM:500,maxMM:600},
+    {pn:'200712DS',len:'26–32"',mm:'650–800',minMM:650,maxMM:800},
+    {pn:'200713DS',len:'32–36"',mm:'800–900',minMM:800,maxMM:900},
+    {pn:'200719DS',len:'38–40"',mm:'950–1000',minMM:950,maxMM:1000}]
+};
+
+/* Marine SS blade catalogs (used by 4A, 4RCE, MD, DD) */
+const BLADES_LIST = {
+  '4A':[9,10,11,12,14,16,18,20,22,24].map(n=>({pn:`136${String(n).padStart(2,'0')}M`,len:`${n}"`,mm:n*MM_PER_IN})),
+  '4RCE':[9,10,11,12,14,16,18,20,22,24].map(n=>({pn:`136${String(n).padStart(2,'0')}M`,len:`${n}"`,mm:n*MM_PER_IN})),
+  'MD':[16,18,20,22,24,26,28].map(n=>({pn:`136${String(n).padStart(2,'0')}M`,len:`${n}"`,mm:n*MM_PER_IN}))
+       .concat([28,30,32].map(n=>({pn:`137${String(n).padStart(2,'0')}SSM`,len:`${n}" SS`,mm:n*MM_PER_IN}))),
+  'DD':[20,22,24,26,28].map(n=>({pn:`136${String(n).padStart(2,'0')}M`,len:`${n}"`,mm:n*MM_PER_IN}))
+       .concat([28,30,32,34,36,38,40].map(n=>({pn:`137${String(n).padStart(2,'0')}SSM`,len:`${n}" SS Saddle`,mm:n*MM_PER_IN})))
+       .concat([{pn:'78-460',len:'46" HD78 Saddle Mount',mm:46*MM_PER_IN,note:'Extends beyond DD 1000mm rating — verify install clearance'}])
+};
+
+/* HD blade series — only used by 4R (bladeMode === 'series') */
+const HD_BLADES = {
+  'M6':{name:'Premium+',arms:['radial'],lens:[12,13,14,15,16,17,18,19,20,21,22,24,26,28]},
+  'W1':{name:'Winter',arms:['radial','panto'],lens:[15,16,18,20,22,24,26,28]},
+  'CLX':{name:'Clix Original',arms:['radial'],lens:[14,16,17,18,19,20,21,22,24,26,28,32]},
+  '78':{name:'HD78 Saddle',arms:['panto'],lens:[12,14,16,18,20,22,24,26,28,46],
+    customPN:{46:'78-460'}}
+};
+
+/* Wet kit lookup */
+const WET_KIT = {radial:'WE19492',panto:'WE19491'};
+
+/* Marine Dual Drive pivot shaft lookup — indexed by shaft length */
+const DD_PIVOT_SHAFT = {
+  '1in':   'PV51AJ1001',
+  '2in':   'PV51AJ2001',
+  '3in':   'PV51AJ3001',
+  '1.25in':'PV51AJ4001',
+  '2.5in': 'PV51AJ5001'
+};
+
+/* ═══════════════════════════════════════════════════════════════
+   3. STATE + FLOW
+   ═══════════════════════════════════════════════════════════════ */
+let unit="mm";
+let S = freshState();
+
+function freshState(){
+  return {
+    step:0,
+    expertMode:null,               // null = not chosen yet, false = guided, true = expert
+    // Selector inputs
+    W:600, H:550, d:50.8, t:12.7, glass:'Flat',
+    // Selector outputs
+    selectorRan:false, sR:null, sP:null, sB:null,
+    // Choice + downstream
+    system:null,                   // 'radial'|'panto'|'bent'
+    motor:null,                    // motor key
+    voltage:'12v', park:'right', parkCircuit:'coast', sweep:90, shaft:null, color:'white', switchInstalled:false,
+    armType:null,                  // 'radial'|'panto' — derived from system
+    armPn:null, bladeSeries:null, bladeLen:null, bladePn:null
+  };
+}
+
+/* Dynamic flow — expert path skips selector + system geometry steps */
+function getFlow(){
+  const expert = S.expertMode === true;
+  const f = [{id:'intro', title:'Get Started', desc:'Do you know your specs, or need help identifying the system?'}];
+  if(expert){
+    f.push(
+      {id:'motor',   title:'Motor',                desc:'Choose from the 5 motor systems.'},
+      {id:'config',  title:'Motor Configuration',  desc:'Voltage, park, sweep, shaft, and color.'},
+      {id:'arm',     title:'Wiper Arm',            desc:'Choose arm style and length range.'},
+      {id:'blade',   title:'Wiper Blade',          desc:'Choose blade size.'},
+      {id:'summary', title:'Complete System',      desc:'BOM, part number, wiring, and printable spec sheet.'}
+    );
+  } else {
+    f.push(
+      {id:'selector',title:'Windshield Specs',     desc:'Enter dimensions; we compute the recommended wiper system.'},
+      {id:'system',  title:'Choose System',        desc:'Pick the wiper geometry that fits your application.'},
+      {id:'motor',   title:'Motor',                desc:'Confirm the motor — pre-selected from your windshield specs.'},
+      {id:'config',  title:'Motor Configuration',  desc:'Voltage, park, sweep, shaft, and color.'},
+      {id:'arm',     title:'Wiper Arm',            desc:'Length range pre-selected to match your computed arm length.'},
+      {id:'blade',   title:'Wiper Blade',          desc:'Series + length pre-selected to match your computed blade length.'},
+      {id:'summary', title:'Complete System',      desc:'BOM, part number, wiring, and printable spec sheet.'}
+    );
+  }
+  return f;
+}
+
+function recommendedFamily(){
+  if(!S.system) return null;
+  const s = S.system==='radial'?S.sR : S.system==='panto'?S.sP : S.sB;
+  if(!s) return null;
+  const solverKey = S.system==='bent'?'BentRadial' : S.system==='panto'?'Panto':'Radial';
+  return lookupSystem(solverKey, s.ArmL, s.BladeL);
+}
+function recommendedMotor(){
+  const fam = recommendedFamily();
+  if(!fam || fam==='Out of range' || fam==='Not Recommended') return null;
+  return FAMILY_TO_MOTOR[fam] || null;
+}
+function currentMotors(){ return MOTORS; }
+function currentMotor(){ return MOTORS[S.motor] || null; }
+function currentSolverResult(){
+  return S.system==='radial'?S.sR : S.system==='panto'?S.sP : S.system==='bent'?S.sB : null;
+}
+function armTypeFromSystem(){
+  // In expert mode S.system isn't set; use the user-chosen armType directly
+  if(S.expertMode === true) return S.armType || 'radial';
+  return S.system==='panto'||S.system==='bent' ? 'panto' : 'radial';
+}
+function currentArms(){
+  if(!S.motor) return [];
+  return ARMS[`${S.motor}-${armTypeFromSystem()}`] || [];
+}
+function currentBlades(){
+  if(!S.motor) return [];
+  return BLADES_LIST[S.motor] || [];
+}
+function bladeMode(){ return S.motor && MOTORS[S.motor] ? MOTORS[S.motor].bladeMode : 'list'; }
+
+/* Allowed sweep angles vary by motor family */
+function anglesForMotor(key){
+  if(key==='MD' || key==='DD') return [40,50,60,70,80,90,100,108];
+  if(key==='4R') return [40,53,65,85,100,110,120];  // standard non-CE 4R WWF discrete angles
+  return [40,50,60,70,80,90,100,110]; // 4A Sealed Marine and 4RCE WWF
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   4. SELECTOR: solve & pick best matches
+   ═══════════════════════════════════════════════════════════════ */
+function runSelector(){
+  const W=S.W, H=S.H, d=S.d, t=S.t, flat=(S.glass==='Flat');
+  S.sR = solveRadial(W,H,d,t,flat);
+  S.sP = solvePanto(W,H,d,t,flat);
+  S.sB = solveBentRadial(W,H,d,t,flat);
+  S.selectorRan=true;
+  // Auto-pick best system: prefer the one with lowest torque among in-range options
+  const opts = [
+    {k:'radial', s:S.sR, fam:lookupSystem('Radial',S.sR.ArmL,S.sR.BladeL)},
+    {k:'panto',  s:S.sP, fam:lookupSystem('Panto', S.sP.ArmL,S.sP.BladeL)},
+    {k:'bent',   s:S.sB, fam:lookupSystem('BentRadial',S.sB.ArmL,S.sB.BladeL)}
+  ];
+  const inRange = opts.filter(o=>o.fam!=='Out of range' && o.fam!=='Not Recommended');
+  const pick = (inRange.length?inRange:opts).sort((a,b)=>a.s.Torque-b.s.Torque)[0];
+  if(pick) S.system = pick.k;
+  // Pre-fill motor + sweep + shaft etc.
+  prefillFromSelector();
+}
+
+function prefillFromSelector(){
+  const motorKey = recommendedMotor();
+  if(motorKey){
+    S.motor = motorKey;
+    const motor = currentMotors()[motorKey];
+    // Default shaft = middle option
+    if(!S.shaft || !motor.shaftOptions.includes(S.shaft)){
+      S.shaft = motor.shaftOptions[Math.floor(motor.shaftOptions.length/2)];
+    }
+  }
+  // Sweep angle: round computed Angle to nearest valid pill for this motor
+  const sol = currentSolverResult();
+  if(sol){
+    const validAngles = anglesForMotor(S.motor);
+    S.sweep = validAngles.reduce((a,b)=>Math.abs(b-sol.Angle)<Math.abs(a-sol.Angle)?b:a, validAngles[0]);
+    if(S.system==='panto' || S.system==='bent'){
+      const cap = validAngles.filter(a=>a<=100);
+      if(cap.length) S.sweep = cap.reduce((a,b)=>Math.abs(b-sol.Angle)<Math.abs(a-sol.Angle)?b:a, cap[0]);
+    }
+  }
+  // Pre-pick arm closest to recommended ArmL
+  prefillArm();
+  prefillBlade();
+}
+function prefillArm(){
+  if(!S.system || !S.motor) return;
+  const sol = currentSolverResult(); if(!sol) return;
+  const arms = currentArms();
+  if(!arms.length){ S.armPn=null; return; }
+  // pick arm whose range contains computed ArmL, else closest mid
+  const target = sol.ArmL;
+  const inRange = arms.filter(a=>target>=a.minMM && target<=a.maxMM);
+  const pick = (inRange.length?inRange:arms).map(a=>({a,d:Math.abs((a.minMM+a.maxMM)/2-target)}))
+                .sort((a,b)=>a.d-b.d)[0].a;
+  S.armPn = pick.pn;
+}
+function prefillBlade(){
+  if(!S.system || !S.motor) return;
+  const sol = currentSolverResult(); if(!sol) return;
+  const target = sol.BladeL;
+  if(bladeMode()==='list'){
+    const blades = currentBlades(); if(!blades.length){S.bladePn=null;return}
+    const pick = blades.map(b=>({b,d:Math.abs(b.mm-target)})).sort((a,b)=>a.d-b.d)[0].b;
+    S.bladePn = pick.pn;
+  } else {
+    // 4R: series + length
+    const at = armTypeFromSystem();
+    const seriesKeys = Object.keys(HD_BLADES).filter(k=>HD_BLADES[k].arms.includes(at));
+    if(!seriesKeys.length){S.bladeSeries=null;S.bladeLen=null;S.bladePn=null;return}
+    if(!S.bladeSeries || !seriesKeys.includes(S.bladeSeries)) S.bladeSeries = seriesKeys[0];
+    const lens = HD_BLADES[S.bladeSeries].lens;
+    const targetIn = target/MM_PER_IN;
+    const len = lens.reduce((a,b)=>Math.abs(b-targetIn)<Math.abs(a-targetIn)?b:a, lens[0]);
+    S.bladeLen = len;
+    S.bladePn = hdBladePN(S.bladeSeries, len);
+  }
+}
+
+function hdBladePN(series, len){
+  const custom = HD_BLADES[series] && HD_BLADES[series].customPN && HD_BLADES[series].customPN[len];
+  return custom || `${series}-${len}`;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   5. UNIT / FORMAT HELPERS
+   ═══════════════════════════════════════════════════════════════ */
+function fmtLen(mm,digits){ if(unit==='mm') return (mm).toFixed(digits??1)+' mm'; return (mm/MM_PER_IN).toFixed(digits??2)+'″'; }
+function fmtLenBoth(mm){ return mm.toFixed(1)+' mm ('+(mm/MM_PER_IN).toFixed(2)+'″)'; }
+function h(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ═══════════════════════════════════════════════════════════════
+   6. SVG SWEEP DIAGRAM
+   ═══════════════════════════════════════════════════════════════ */
+function svgDiagram(g, opts){
+  opts = opts||{};
+  const W=g.W,H=g.H, pad=40, vbW=opts.w||440, vbH=opts.h||340;
+  const scale=Math.min((vbW-2*pad)/W,(vbH-2*pad)/H);
+  const ox=(vbW-W*scale)/2, oy=pad;
+  const X=x=>ox+x*scale, Y=y=>oy+(H-y)*scale;
+  let s=`<svg viewBox="0 0 ${vbW} ${vbH}" xmlns="http://www.w3.org/2000/svg">`;
+  s+=`<rect x="${X(0)}" y="${Y(H)}" width="${W*scale}" height="${H*scale}" fill="#fff" stroke="#0A1A2F" stroke-width="2"/>`;
+  if(g.kind==='radial'||g.kind==='panto'){
+    const L=g.L, Ht=g.Htheta, th=g.theta_deg*D2R;
+    const cx=g.pivotX, cy=g.pivotY;
+    const rOut=L+Ht/2, rIn=Math.max(0,L-Ht/2);
+    const a0=PI/2-th/2, a1=PI/2+th/2;
+    const p1x=cx+rOut*cos(a0), p1y=cy+rOut*sin(a0);
+    const p2x=cx+rOut*cos(a1), p2y=cy+rOut*sin(a1);
+    const p3x=cx+rIn*cos(a1),  p3y=cy+rIn*sin(a1);
+    const p4x=cx+rIn*cos(a0),  p4y=cy+rIn*sin(a0);
+    const lg=th>PI?1:0;
+    s+=`<path d="M ${X(p1x)} ${Y(p1y)} A ${rOut*scale} ${rOut*scale} 0 ${lg} 0 ${X(p2x)} ${Y(p2y)} L ${X(p3x)} ${Y(p3y)} A ${rIn*scale} ${rIn*scale} 0 ${lg} 1 ${X(p4x)} ${Y(p4y)} Z" fill="#0057FF" fill-opacity=".18" stroke="#003FCC" stroke-width="1.3"/>`;
+    s+=`<line x1="${X(cx)}" y1="${Y(cy+rIn)}" x2="${X(cx)}" y2="${Y(cy+rOut)}" stroke="#0A1A2F" stroke-width="3" stroke-linecap="round"/>`;
+    s+=`<line x1="${X(cx)}" y1="${Y(cy)}" x2="${X(cx)}" y2="${Y(cy+rIn)}" stroke="#5A6B82" stroke-width="2.5" stroke-dasharray="3,3"/>`;
+    s+=`<circle cx="${X(cx)}" cy="${Y(cy)}" r="5.5" fill="#0A1A2F"/><circle cx="${X(cx)}" cy="${Y(cy)}" r="2" fill="#0057FF"/>`;
+  } else if(g.kind==='bent'){
+    const cx=g.pivotX, cy=g.pivotY;
+    const rOut=g.LA+g.LB/2, rIn=Math.max(0,g.LA-g.LB/2);
+    const a0=PI/2, a1=PI/2+90*D2R;
+    const p1x=cx+rOut*cos(a0), p1y=cy+rOut*sin(a0);
+    const p2x=cx+rOut*cos(a1), p2y=cy+rOut*sin(a1);
+    const p3x=cx+rIn*cos(a1),  p3y=cy+rIn*sin(a1);
+    const p4x=cx+rIn*cos(a0),  p4y=cy+rIn*sin(a0);
+    s+=`<path d="M ${X(p1x)} ${Y(p1y)} A ${rOut*scale} ${rOut*scale} 0 0 0 ${X(p2x)} ${Y(p2y)} L ${X(p3x)} ${Y(p3y)} A ${rIn*scale} ${rIn*scale} 0 0 1 ${X(p4x)} ${Y(p4y)} Z" fill="#0057FF" fill-opacity=".18" stroke="#003FCC" stroke-width="1.3"/>`;
+    s+=`<line x1="${X(cx)}" y1="${Y(cy+rIn)}" x2="${X(cx)}" y2="${Y(cy+rOut)}" stroke="#0A1A2F" stroke-width="3" stroke-linecap="round"/>`;
+    s+=`<line x1="${X(cx)}" y1="${Y(cy)}" x2="${X(cx)}" y2="${Y(cy+rIn)}" stroke="#5A6B82" stroke-width="2.5" stroke-dasharray="3,3"/>`;
+    s+=`<circle cx="${X(cx)}" cy="${Y(cy)}" r="5.5" fill="#0A1A2F"/><circle cx="${X(cx)}" cy="${Y(cy)}" r="2" fill="#0057FF"/>`;
+  }
+  s+=`<text x="${X(W/2)}" y="${Y(0)+22}" font-size="11" text-anchor="middle" fill="#0A1A2F" font-family="Inter, Helvetica">W = ${fmtLenBoth(W)}</text>`;
+  s+=`<text x="${X(0)-8}" y="${Y(H/2)}" font-size="11" text-anchor="middle" fill="#0A1A2F" font-family="Inter, Helvetica" transform="rotate(-90 ${X(0)-8} ${Y(H/2)})">H = ${fmtLenBoth(H)}</text>`;
+  s+=`</svg>`;
+  return s;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   7. RENDER — STAGES
+   ═══════════════════════════════════════════════════════════════ */
+
+function nav(opts={}){
+  const {nextLabel='Continue →', backShown=true, nextEnabled=true, nextAction='next()'} = opts;
+  return `<div class="nav-row">
+    ${backShown && S.step>0 ? `<button class="btn btn-ghost" onclick="back()">← Back</button>`:''}
+    <button class="btn btn-primary" onclick="${nextAction}" ${nextEnabled?'':'disabled'}>${nextLabel}</button>
+    <button class="btn-reset" onclick="resetAll()">↺ Start over</button>
+  </div>`;
+}
+
+/* ─── STAGE 0: INTRO ─── */
+function renderIntro(){
+  return `
+    <div class="card" style="border:0;background:transparent;box-shadow:none;padding:0;margin-bottom:0">
+      <p style="font-size:15px;color:var(--mid);margin-bottom:24px;max-width:680px">
+        Choose how you'd like to proceed. You can switch paths anytime by hitting <b>Start Over</b> in the header.
+      </p>
+      <div class="intro-grid">
+        <div class="intro-card" onclick="setExpertMode(false)">
+          <div class="intro-eyebrow">Path 1 · Guided</div>
+          <div class="intro-icon">🔍</div>
+          <h3>Help me identify the system</h3>
+          <p>I have the windshield's width and height. Walk me through the calculation and recommend the right wiper system, arm, and blade.</p>
+          <div class="intro-cta">Start with windshield specs →</div>
+        </div>
+        <div class="intro-card" onclick="setExpertMode(true)">
+          <div class="intro-eyebrow">Path 2 · Expert</div>
+          <div class="intro-icon">⚙️</div>
+          <h3>I know my specifications</h3>
+          <p>I already know which motor system I need. Take me straight to the 5 motor systems and let me build the part number.</p>
+          <div class="intro-cta">Browse 5 motor systems →</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ─── STAGE 1: SELECTOR ─── */
+function renderSelector(){
+  const u = unit==='mm'?'mm':'″';
+  const valW = unit==='mm'?S.W:(S.W/MM_PER_IN).toFixed(2);
+  const valH = unit==='mm'?S.H:(S.H/MM_PER_IN).toFixed(2);
+  const valD = unit==='mm'?S.d:(S.d/MM_PER_IN).toFixed(3);
+  const valT = unit==='mm'?S.t:(S.t/MM_PER_IN).toFixed(3);
+
+  return `
+  <div class="card">
+    <div class="card-hd">Windshield Specifications
+      <div class="badge">v1.2 formulas — bit-exact</div>
+    </div>
+    <div class="help">
+      <b>How this works.</b> Enter the windshield's outside dimensions. We solve three wiper geometries
+      (Radial, Panto, Bent Radial) and pre-select the system, motor, arm, and blade that best fit your specs.
+      You'll be able to override any choice in later steps.
+    </div>
+
+    <div class="fields">
+      <div style="display:flex;gap:12px;align-items:center;justify-content:flex-end">
+        <span style="font-size:11px;font-weight:700;color:var(--mid);letter-spacing:1px;text-transform:uppercase">Units</span>
+        <div class="unit-toggle">
+          <button class="${unit==='mm'?'active':''}" onclick="setUnit('mm')">mm</button>
+          <button class="${unit==='in'?'active':''}" onclick="setUnit('in')">inches</button>
+        </div>
+      </div>
+      <div class="fields f3">
+        <div class="field">
+          <label>Windshield Width (W)</label>
+          <div class="row"><input id="inW" type="number" step="any" value="${valW}" oninput="updInput('W',this.value)"><span class="u">${u}</span></div>
+        </div>
+        <div class="field">
+          <label>Windshield Height (H)</label>
+          <div class="row"><input id="inH" type="number" step="any" value="${valH}" oninput="updInput('H',this.value)"><span class="u">${u}</span></div>
+        </div>
+        <div class="field">
+          <label>Glass</label>
+          <div class="seg">
+            <button class="${S.glass==='Flat'?'active':''}" onclick="S.glass='Flat';render()">Flat</button>
+            <button class="${S.glass==='Curved'?'active':''}" onclick="S.glass='Curved';render()">Curved</button>
+          </div>
+        </div>
+      </div>
+      <details>
+        <summary style="cursor:pointer;font-weight:700;font-size:12px;letter-spacing:1.2px;text-transform:uppercase;color:var(--mid);padding:8px 0">Advanced (defaults shown)</summary>
+        <div class="fields f2" style="margin-top:10px">
+          <div class="field">
+            <label>Trim → Pivot Distance (d)</label>
+            <div class="row"><input type="number" step="any" value="${valD}" oninput="updInput('d',this.value)"><span class="u">${u}</span></div>
+          </div>
+          <div class="field">
+            <label>Edge Tolerance (t)</label>
+            <div class="row"><input type="number" step="any" value="${valT}" oninput="updInput('t',this.value)"><span class="u">${u}</span></div>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--mid);margin-top:8px">
+          Defaults: d = 50.8 mm (2″), t = 12.7 mm (½″). Note: Panto solver always uses d = 50.8 mm internally per spreadsheet.
+        </div>
+      </details>
+    </div>
+  </div>
+
+  ${nav({nextLabel:'Solve & Continue →', backShown:false, nextAction:'runAndAdvance()'})}
+  `;
+}
+
+/* ─── STAGE 2: SYSTEM CHOICE ─── */
+function renderSystemChoice(){
+  // Expert path: simple geometry chooser, no recommendations
+  if(S.expertMode === true){
+    return renderSystemChoiceExpert();
+  }
+  if(!S.selectorRan) runSelector();
+  const fam = {radial:lookupSystem('Radial',S.sR.ArmL,S.sR.BladeL),
+               panto: lookupSystem('Panto', S.sP.ArmL,S.sP.BladeL),
+               bent:  lookupSystem('BentRadial',S.sB.ArmL,S.sB.BladeL)};
+  // recommended = current S.system (set by runSelector)
+  const card = (key, name, sol) => {
+    const f = fam[key];
+    const isRec = key===S.system;
+    const isSel = key===S.system;
+    const sysWarn = (f==='Out of range'||f==='Not Recommended');
+    return `
+      <div class="result-card ${isSel?'sel':''} ${isRec?'recommended':''}" onclick="pickSystem('${key}')">
+        <div class="rc-head"><div class="name">${name}</div><div class="pct">${(sol.pct*100).toFixed(1)}% wiped</div></div>
+        <div class="rc-body">${svgDiagram(sol.geom,{w:380,h:240})}</div>
+        <div class="rc-specs">
+          <div class="rc-spec"><span class="k">Arm</span><span class="v">${fmtLen(sol.ArmL,0)}</span></div>
+          <div class="rc-spec"><span class="k">Blade</span><span class="v">${fmtLen(sol.BladeL,0)}</span></div>
+          <div class="rc-spec"><span class="k">Angle</span><span class="v">${sol.Angle}°</span></div>
+          <div class="rc-spec"><span class="k">Torque</span><span class="v">${sol.Torque.toFixed(2)} N·m</span></div>
+          <div class="rc-spec"><span class="k">Pivot from ${key==='bent'?'right':'center'}</span><span class="v">${fmtLen(sol.Pivot,0)}</span></div>
+          <div class="rc-spec"><span class="k">Wiped Area</span><span class="v">${(sol.pct*100).toFixed(1)}%</span></div>
+        </div>
+        <div class="rc-sys ${sysWarn?'warn':''}"><div class="lbl">Motor Family</div><div class="val">${f}</div></div>
+        <div class="rc-pick">${isSel?'✓ Selected':'Click to choose'}</div>
+      </div>`;
+  };
+  return `
+    <div class="card">
+      <div class="card-hd">Wiper System Geometry
+        <div class="badge">${recommendedFamily()||'—'} recommended</div>
+      </div>
+      <div class="help">
+        <b>Three geometries solve to the same windshield.</b> Each one has a different sweep pattern, motor family,
+        and pivot location. The <b>recommended</b> card was picked to minimize required torque while staying within
+        the size envelope. You can override.
+      </div>
+      <div class="results-grid">
+        ${card('radial','Radial',S.sR)}
+        ${card('panto','Panto',S.sP)}
+        ${card('bent','Bent Radial',S.sB)}
+      </div>
+    </div>
+    ${nav({nextLabel:'Configure Motor →', nextEnabled: !!S.system && recommendedFamily()!=='Out of range' && recommendedFamily()!=='Not Recommended'})}
+  `;
+}
+
+/* Expert system chooser — no selector recommendations */
+function renderSystemChoiceExpert(){
+  const card = (key, name, desc) => {
+    const isSel = key===S.system;
+    return `
+      <div class="result-card ${isSel?'sel':''}" onclick="pickSystem('${key}')">
+        <div class="rc-head"><div class="name">${name}</div><div class="pct" style="opacity:.55">Geometry</div></div>
+        <div class="rc-body" style="padding:24px;background:#fff;text-align:center">
+          <div style="font-size:48px;line-height:1;margin-bottom:14px">${key==='radial'?'⌒':key==='panto'?'⫻':'⟆'}</div>
+          <p style="font-size:13px;color:var(--mid);line-height:1.55">${desc}</p>
+        </div>
+        <div class="rc-pick">${isSel?'✓ Selected':'Click to choose'}</div>
+      </div>`;
+  };
+  return `
+    <div class="card">
+      <div class="card-hd">Wiper System Geometry</div>
+      <div class="help">
+        Pick the wiper geometry for your application. <b>Radial</b> sweeps in a fixed arc.
+        <b>Panto</b> uses a parallel linkage and keeps the blade level. <b>Bent Radial</b> pivots
+        from the corner for asymmetric coverage.
+      </div>
+      <div class="results-grid">
+        ${card('radial','Radial','Single-pivot arc sweep. Most common. Compatible with all 5 motor systems.')}
+        ${card('panto','Panto','Parallel linkage keeps blade level across the sweep. Best for tall windshields.')}
+        ${card('bent','Bent Radial','Pivot at corner for asymmetric coverage. Bridge & helm windows with tight clearance.')}
+      </div>
+    </div>
+    ${nav({nextLabel:'Choose Motor →', nextEnabled: !!S.system})}
+  `;
+}
+
+/* ─── STAGE 3: MOTOR ─── */
+function renderMotor(){
+  const recKey = recommendedMotor();
+  const sol = currentSolverResult();
+  return `
+    <div class="card">
+      <div class="card-hd">Motor Selection
+        <div class="badge">5 systems · ordered smallest → largest</div>
+      </div>
+      <div class="help">
+        Pre-selected based on the recommended motor family for your computed arm length
+        (<b>${sol?fmtLen(sol.ArmL,0):'—'}</b>) and blade length (<b>${sol?fmtLen(sol.BladeL,0):'—'}</b>).
+        All 5 motors are shown — pick any to override.
+      </div>
+      <div class="opt-grid" style="gap:12px">
+        ${MOTOR_ORDER.map(k=>{
+          const m = MOTORS[k];
+          const isSel = S.motor===k, isRec = k===recKey;
+          const dim = sol && (sol.BladeL > m.maxBladeMM);
+          return `<div class="motor-card ${isSel?'sel':''} ${isRec?'recommended':''} ${dim?'dimmed':''}" onclick="pickMotor('${k}')">
+            <div class="motor-top"><div>
+              <div class="motor-name">${h(m.name)} <span style="font-size:10.5px;font-weight:600;color:var(--mid);letter-spacing:1px;text-transform:uppercase;margin-left:6px">${h(m.segment)}</span></div>
+              <div class="motor-desc">${h(m.desc)}</div>
+              ${isRec?`<div class="reason match">✓ Matches recommended ${recommendedFamily()} family</div>`:''}
+              ${dim?`<div class="reason warn">Blade length exceeds this motor's ${m.maxBladeMM}mm capacity</div>`:''}
+            </div></div>
+            <div class="motor-specs">
+              <div class="ms"><div class="ms-k">Torque</div><div class="ms-v">${m.torque}</div></div>
+              <div class="ms"><div class="ms-k">Max blade</div><div class="ms-v">${m.maxBladeMM} mm</div></div>
+              <div class="ms"><div class="ms-k">Shaft</div><div class="ms-v">${m.shaftType}</div></div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+    ${nav({nextLabel:'Configure →', nextEnabled: !!S.motor})}
+  `;
+}
+
+/* ─── STAGE 4: CONFIG (voltage, park, sweep, shaft, color) ─── */
+function renderConfig(){
+  const motor = currentMotor();
+  const sol = currentSolverResult();
+  const isDIN = (S.motor==='MD'||S.motor==='DD');
+  const angles = anglesForMotor(S.motor);
+  // Snap current sweep into the allowed list for this motor (in case motor just changed)
+  if(!angles.includes(S.sweep)) S.sweep = angles.reduce((a,b)=>Math.abs(b-S.sweep)<Math.abs(a-S.sweep)?b:a, angles[0]);
+  const recAngle = sol ? angles.reduce((a,b)=>Math.abs(b-sol.Angle)<Math.abs(a-sol.Angle)?b:a, angles[0]) : S.sweep;
+
+  return `
+    <div class="card">
+      <div class="card-hd">Voltage</div>
+      <div class="opt-grid g2">
+        ${optBox('voltage','12v','12 Volt','Recreational boats, light HD vehicles, most US commercial')}
+        ${optBox('voltage','24v','24 Volt','Commercial vessels, large yachts, EU buses & trucks')}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hd">Park Position</div>
+      <div class="opt-grid g2">
+        ${optBox('park','right','Right-hand Park','Arm rests at the right side of the windshield (most common)')}
+        ${optBox('park','left','Left-hand Park','Arm rests at the left side of the windshield')}
+      </div>
+      ${(isDIN)?`
+      <div style="margin-top:14px">
+        <div class="card-hd" style="border-bottom:0;padding-bottom:0;margin-bottom:10px">Park Circuit (DIN motors only)</div>
+        <div class="opt-grid g2">
+          ${optBox('parkCircuit','coast','Coast-to-Park','Motor decelerates and coasts. Simple & reliable.')}
+          ${optBox('parkCircuit','dynamic','Dynamic Park','Motor actively drives to exact park position. More precise.')}
+        </div>
+      </div>`:''}
+    </div>
+
+    <div class="card">
+      <div class="card-hd">Sweep Angle
+        <div class="badge">${recAngle}° recommended</div>
+      </div>
+      <div class="angle-grid">
+        ${angles.map(a=>`<div class="angle-pill ${S.sweep===a?'sel':''} ${a===recAngle?'recommended':''}" onclick="S.sweep=${a};render()">${a}°</div>`).join('')}
+      </div>
+      <div class="reason ${sol&&Math.abs(sol.Angle-S.sweep)<=5?'match':'warn'}" style="margin-top:10px">
+        Computed wipe angle from windshield: <b>${sol?sol.Angle:'—'}°</b>.
+        ${sol&&Math.abs(sol.Angle-S.sweep)<=5?'✓ Matches selected sweep.':'Selected sweep differs from computed — verify clearance.'}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hd">Shaft Length</div>
+      <div class="opt-grid" style="grid-template-columns:repeat(${motor.shaftOptions.length},1fr)">
+        ${motor.shaftOptions.map(s=>optBox('shaft',s,s.replace('in','"'),'')).join('')}
+      </div>
+      ${(S.motor==='4A')?`
+        <div style="margin-top:14px">
+          <div class="card-hd" style="border-bottom:0;padding-bottom:0;margin-bottom:10px">Motor Color</div>
+          <div class="opt-grid g2">
+            ${optBox('color','white','White','Standard powder-coated aluminum')}
+            ${optBox('color','black','Black','Black powder-coated case (adds "B" to part number)')}
+          </div>
+        </div>`:''}
+      ${(S.motor==='4R')?`
+        <div style="margin-top:14px">
+          <div class="card-hd" style="border-bottom:0;padding-bottom:0;margin-bottom:10px">Switch</div>
+          <div class="opt-grid g2">
+            <div class="opt ${!S.switchInstalled?'sel':''}" onclick="S.switchInstalled=false;render()">
+              <div class="opt-title">No switch installed<span>${!S.switchInstalled?'●':'○'}</span></div>
+              <div class="opt-desc">Customer supplies their own dash switch.</div>
+            </div>
+            <div class="opt ${S.switchInstalled?'sel':''}" onclick="S.switchInstalled=true;render()">
+              <div class="opt-title">Switch installed (19S2)<span>${S.switchInstalled?'●':'○'}</span></div>
+              <div class="opt-desc">Factory-fitted 2-speed dash switch. Locks shaft to 1.5".</div>
+            </div>
+          </div>
+        </div>`:''}
+    </div>
+
+    ${nav({nextLabel:'Configure Arm →', nextEnabled: !!S.voltage && !!S.park && !!S.shaft})}
+  `;
+}
+
+function optBox(key,val,title,desc){
+  const sel = S[key]===val;
+  return `<div class="opt ${sel?'sel':''}" onclick="S['${key}']='${val}';render()">
+    <div class="opt-title">${h(title)}<span style="font-size:14px">${sel?'●':'○'}</span></div>
+    ${desc?`<div class="opt-desc">${h(desc)}</div>`:''}
+  </div>`;
+}
+
+/* ─── STAGE 5: ARM ─── */
+function renderArm(){
+  const sol = currentSolverResult();
+  const arms = currentArms();
+  const at = armTypeFromSystem();
+  const expert = S.expertMode === true;
+  const armTypeCard = expert ? `
+    <div class="card">
+      <div class="card-hd">Arm Type</div>
+      <div class="help">
+        <b>Radial arms</b> sweep in a fixed arc. <b>Pantograph arms</b> use a parallel linkage to keep the blade
+        level across the sweep — better for large or curved glass. Pantograph arms require saddle blade attachment.
+      </div>
+      <div class="opt-grid g2">
+        <div class="opt ${at==='radial'?'sel':''}" onclick="setArmType('radial')">
+          <div class="opt-title">Radial Arm<span>${at==='radial'?'●':'○'}</span></div>
+          <div class="opt-desc">Single-pivot arc sweep. Most common. J-Hook or saddle blade end.</div>
+        </div>
+        <div class="opt ${at==='panto'?'sel':''}" onclick="setArmType('panto')">
+          <div class="opt-title">Pantograph Arm<span>${at==='panto'?'●':'○'}</span></div>
+          <div class="opt-desc">Parallel motion. Better for large glass. Saddle blade attachment required.</div>
+        </div>
+      </div>
+    </div>` : `
+    <div class="card">
+      <div class="card-hd">Arm Type
+        <div class="badge">${at==='radial'?'Radial':'Pantograph'} required</div>
+      </div>
+      <div class="help">
+        Arm type is locked by your selected wiper system geometry: <b>${S.system==='radial'?'Radial':S.system==='panto'?'Panto':'Bent Radial'}</b>
+        → <b>${at==='radial'?'Radial arm':'Pantograph arm'}</b>.
+      </div>
+    </div>`;
+  return armTypeCard + `
+
+    <div class="card">
+      <div class="card-hd">Arm Length
+        <div class="badge">${sol?fmtLen(sol.ArmL,0)+' computed':'—'}</div>
+      </div>
+      <div class="help tip">
+        All arms are <b>304 stainless, powder-coated black, supplied DRY</b>.
+        Wet kit included downstream: <span class="bom-pn">${WET_KIT[at]}</span>.
+      </div>
+      <div class="opt-grid g2">
+        ${arms.length===0?`<div class="help warn">No arms in this catalog match your selected motor + arm type combination.</div>`:''}
+        ${arms.map(a=>{
+          const inRange = sol && (sol.ArmL>=a.minMM && sol.ArmL<=a.maxMM);
+          const isSel = S.armPn===a.pn;
+          return `<div class="opt ${isSel?'sel':''} ${isSel&&inRange?'recommended':''}" onclick="S.armPn='${a.pn}';render()">
+            <div class="opt-title">${a.len} <span style="color:var(--mid);font-weight:400;font-size:12px">(${a.mm} mm)</span><span>${isSel?'●':'○'}</span></div>
+            ${a.swivel?`<div class="opt-desc">Swivel head</div>`:''}
+            <div class="reason ${inRange?'match':''}">${inRange?'✓ Computed arm length fits this range':'Outside computed range'}</div>
+            <span class="opt-pn">${a.pn}</span>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    ${nav({nextLabel:'Configure Blade →', nextEnabled: !!S.armPn})}
+  `;
+}
+
+/* ─── STAGE 6: BLADE ─── */
+function renderBlade(){
+  const sol = currentSolverResult();
+  if(bladeMode()==='list'){
+    const blades = currentBlades();
+    return `
+      <div class="card">
+        <div class="card-hd">Blade Selection
+          <div class="badge">${sol?fmtLen(sol.BladeL,0)+' computed':'—'}</div>
+        </div>
+        <div class="help tip">
+          All marine-grade blades are <b>304 stainless, black powder-coated</b>. Universal J-Hook adapter
+          unless labeled "SS Saddle".
+        </div>
+        <div class="opt-grid g4">
+          ${blades.map(b=>{
+            const diff = sol?Math.abs(b.mm-sol.BladeL):0;
+            const isClosest = sol && diff<=25;
+            const isSel = S.bladePn===b.pn;
+            return `<div class="opt ${isSel?'sel':''} ${isSel&&isClosest?'recommended':''}" onclick="S.bladePn='${b.pn}';render()">
+              <div class="opt-title">${b.len}<span>${isSel?'●':'○'}</span></div>
+              ${sol?`<div class="reason ${isClosest?'match':''}">${diff<=12?'✓ Best match':'Δ '+diff.toFixed(0)+' mm'}</div>`:''}
+              <span class="opt-pn">${b.pn}</span>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+      ${nav({nextLabel:'View Complete System →', nextEnabled: !!S.bladePn})}`;
+  }
+  // 4R: series + length
+  const at = armTypeFromSystem();
+  const seriesKeys = Object.keys(HD_BLADES).filter(k=>HD_BLADES[k].arms.includes(at));
+  const series = HD_BLADES[S.bladeSeries] || HD_BLADES[seriesKeys[0]];
+  const lens = series ? series.lens : [];
+  const targetIn = sol ? sol.BladeL/MM_PER_IN : 0;
+  return `
+    <div class="card">
+      <div class="card-hd">Blade Series</div>
+      <div class="opt-grid g2">
+        ${seriesKeys.map(k=>{
+          const isSel = (S.bladeSeries||seriesKeys[0])===k;
+          return `<div class="opt ${isSel?'sel':''}" onclick="S.bladeSeries='${k}';prefillBlade();render()">
+            <div class="opt-title">${HD_BLADES[k].name} <span style="font-size:11px;color:var(--mid)">(${k})</span><span>${isSel?'●':'○'}</span></div>
+            <div class="opt-desc">Compatible with ${HD_BLADES[k].arms.join(' & ')} arms</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd">Blade Length
+        <div class="badge">${sol?(targetIn).toFixed(1)+'″ computed':'—'}</div>
+      </div>
+      <div class="opt-grid g4">
+        ${lens.map(l=>{
+          const diff = Math.abs(l-targetIn);
+          const isClosest = diff<=1;
+          const isSel = S.bladeLen===l;
+          const effSeries = S.bladeSeries||seriesKeys[0];
+          const pn = hdBladePN(effSeries, l);
+          return `<div class="opt ${isSel?'sel':''} ${isSel&&isClosest?'recommended':''}" onclick="S.bladeLen=${l};S.bladePn='${pn}';render()">
+            <div class="opt-title">${l}″<span>${isSel?'●':'○'}</span></div>
+            <div class="reason ${isClosest?'match':''}">${diff<0.5?'✓ Best match':'Δ '+diff.toFixed(1)+'″'}</div>
+            <span class="opt-pn">${pn}</span>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+    ${nav({nextLabel:'View Complete System →', nextEnabled: !!S.bladePn})}`;
+}
+
+/* ─── STAGE 7: SUMMARY ─── */
+function buildPN(){
+  const motor = currentMotor(); if(!motor) return '—';
+  return motor.buildPN(S);
+}
+function renderSummary(){
+  const motor = currentMotor();
+  const pn = buildPN();
+  const sol = currentSolverResult();
+  const at = armTypeFromSystem();
+  const arms = currentArms();
+  const armRow = arms.find(a=>a.pn===S.armPn);
+  let bladeDesc;
+  if(bladeMode()==='list'){
+    const b = (currentBlades().find(x=>x.pn===S.bladePn)||{});
+    bladeDesc = `${b.len||S.bladePn} · 304 SS marine-grade blade`;
+  } else {
+    bladeDesc = `${(HD_BLADES[S.bladeSeries]||{name:''}).name} · ${S.bladeLen}″`;
+  }
+
+  const bom = [
+    {role:'Motor', pn, desc:motor.name, note:`${S.voltage} · ${S.park}-hand park · ${S.sweep}° sweep · ${S.shaft.replace('in','″')} shaft${S.motor==='4A'?' · '+S.color:''}${S.motor==='4R'&&S.switchInstalled?' · 19S2 switch':''}`},
+    {role:'Arm', pn:S.armPn, desc:`${at==='radial'?'Radial':'Pantograph'} arm · ${armRow?armRow.len+' ('+armRow.mm+'mm)':''}`, note:'304 SS, powder-coated black. Supplied dry.'},
+    {role:'Blade', pn:S.bladePn, desc:bladeDesc, note: bladeMode()==='list'?'Universal J-Hook / Saddle compatible':'Per series spec'},
+  ];
+  const acc = [
+    {role:'Wet Kit', pn:WET_KIT[at], desc:`Wet kit for ${at==='radial'?'radial':'pantograph'} arms`, note:'Spray nozzle + tubing + retainer clips + instructions'},
+    ...((S.motor==='4A'||S.motor==='4RCE'||S.motor==='4R')?[{role:'Hardware', pn:'400297–400299', desc:'Motor mounting hardware', note:'M16 nut, stainless spacer, rubber washers'}]:[]),
+    ...(S.motor==='MD'&&at==='panto'?[{role:'Panto Kit', pn:'SP30260003', desc:'Slave pivot adapter', note:'Required for pantograph arms with MD Compact Drive'}]:[]),
+    ...(S.motor==='DD'&&DD_PIVOT_SHAFT[S.shaft]?[{role:'Pivot Shaft', pn:DD_PIVOT_SHAFT[S.shaft], desc:`Dual Drive pivot shaft · ${S.shaft.replace('in','″')}`, note:'Required for DD systems — matched to selected shaft length'}]:[]),
+    ...(S.motor==='4R'&&!S.switchInstalled?[{role:'Switch Kit', pn:'400258', desc:'Optional 2-speed dash switch', note:'Park / Low / High'}]:[]),
+  ];
+
+  return `
+  <!-- print header -->
+  <div class="print-only">
+    <header><div class="pheader">
+      <div>
+        <h1>Wiper Express Wiper System Spec Sheet</h1>
+        <div class="psub">${motor.segment} · ${motor.name}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:11px;color:var(--mid)">${new Date().toLocaleDateString()}</div>
+        <div style="font-weight:700">wiperexpress.com · (800) 528-3048</div>
+      </div>
+    </div></header>
+  </div>
+
+  <div class="help tip">
+    <b>✓ Your system is complete.</b> Print this spec sheet to email your distributor or hand off to the technician.
+    Use the "Edit" buttons in the sidebar nav above to adjust any choice.
+  </div>
+
+  <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+    <button class="btn btn-primary" onclick="downloadSpecSheet()">⬇ Download HTML Spec Sheet</button>
+    <button class="btn btn-print" onclick="window.print()">🖨 Print</button>
+    <button class="btn btn-ghost" onclick="goStep(0)">← Edit Selections</button>
+  </div>
+
+  <div class="pn-builder">
+    <div class="pn-builder-title">Motor Part Number</div>
+    <div class="pn-segs">${pnSegments()}</div>
+    <div style="font-size:10px;color:rgba(255,255,255,0.4);margin:14px 0 6px;letter-spacing:1.5px;text-transform:uppercase">Complete Motor PN</div>
+    <div class="pn-full">${pn}</div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd">System Specifications</div>
+    <div class="spec-grid">
+      <div class="spec-tile"><div class="spec-k">Geometry</div><div class="spec-v">${S.system==='radial'?'Radial':S.system==='panto'?'Panto':S.system==='bent'?'Bent Radial':(armTypeFromSystem()==='radial'?'Radial':'Pantograph')}</div></div>
+      <div class="spec-tile"><div class="spec-k">Wipe Angle</div><div class="spec-v">${S.sweep}°</div></div>
+      ${sol?`<div class="spec-tile"><div class="spec-k">Wiped Area</div><div class="spec-v">${(sol.pct*100).toFixed(1)}%</div></div>`:''}
+      ${sol?`<div class="spec-tile"><div class="spec-k">Required Torque</div><div class="spec-v">${sol.Torque.toFixed(2)} N·m</div></div>`:''}
+      <div class="spec-tile"><div class="spec-k">Voltage</div><div class="spec-v">${S.voltage}</div></div>
+      <div class="spec-tile"><div class="spec-k">Park</div><div class="spec-v">${S.park}-hand${S.parkCircuit&&(S.motor==='MD'||S.motor==='DD')?' / '+S.parkCircuit:''}</div></div>
+      <div class="spec-tile"><div class="spec-k">Shaft</div><div class="spec-v">${S.shaft.replace('in','″')}</div></div>
+      ${sol?`<div class="spec-tile"><div class="spec-k">Pivot from edge</div><div class="spec-v">${fmtLen(sol.Pivot,0)}</div></div>`:''}
+    </div>
+  </div>
+
+  ${sol?`<div class="card">
+    <div class="card-hd">Sweep Diagram (${fmtLenBoth(S.W)} × ${fmtLenBoth(S.H)})</div>
+    <div class="diagram-wrap">${svgDiagram(sol.geom,{w:600,h:340})}</div>
+  </div>`:''}
+
+  <div class="card">
+    <div class="card-hd">Bill of Materials</div>
+    <table class="bom">
+      <thead><tr><th>Component</th><th>Part Number</th><th>Description</th><th>Notes</th></tr></thead>
+      <tbody>${bom.map(r=>`<tr><td class="bom-role">${r.role}</td><td class="bom-pn">${r.pn}</td><td>${h(r.desc)}</td><td class="bom-note">${h(r.note)}</td></tr>`).join('')}</tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-hd">Accessories & Hardware</div>
+    <table class="bom">
+      <thead><tr><th>Item</th><th>Part Number</th><th>Description</th><th>Notes</th></tr></thead>
+      <tbody>${acc.map(r=>`<tr><td class="bom-role">${r.role}</td><td class="bom-pn">${r.pn}</td><td>${h(r.desc)}</td><td class="bom-note">${h(r.note)}</td></tr>`).join('')}</tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-hd">Wiring Color Code — ${motor.name}</div>
+    ${motor.wiring.map(w=>`<div class="wire-row"><div class="wire-dot" style="background:${w.c};${w.bdr?'border:1.5px solid #888':''}"></div><div class="wire-func">${h(w.f)}</div></div>`).join('')}
+    <div style="font-size:11px;color:var(--mid);margin-top:10px">16 AWG, 12" leads. Fusing: ${motor.fusing}. Isolated ground required.</div>
+  </div>
+
+  <div class="card" style="background:linear-gradient(135deg,var(--black) 0%,var(--ink-2) 100%);color:#fff;border:0;position:relative;overflow:hidden;box-shadow:var(--shadow-blue)">
+    <div style="position:absolute;top:0;right:0;width:200px;height:200px;background:radial-gradient(circle,rgba(0,87,255,0.35),transparent 65%);pointer-events:none"></div>
+    <div style="font-weight:800;font-size:11px;letter-spacing:1.8px;text-transform:uppercase;color:var(--gold-l);margin-bottom:8px;position:relative;z-index:1">Contact to Order</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.78);line-height:1.8;position:relative;z-index:1">
+      <b style="color:#fff;font-size:15px;letter-spacing:-0.01em">Wiper Express — Aftermarket Wiper Specialists</b><br>
+      wiperexpress.com &nbsp;·&nbsp; sales@wiperexpress.com &nbsp;·&nbsp; (800) 528-3048
+    </div>
+  </div>
+
+  <div class="nav-row"><button class="btn btn-ghost" onclick="back()">← Back</button><button class="btn-reset" onclick="resetAll()">↺ Start over</button></div>
+  `;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DOWNLOADABLE HTML SPEC SHEET (keeps all color/formatting)
+   ═══════════════════════════════════════════════════════════════ */
+function buildSpecSheetHTML(){
+  const motor = currentMotor();
+  const pn = buildPN();
+  const sol = currentSolverResult();
+  const at = armTypeFromSystem();
+  const arms = currentArms();
+  const armRow = arms.find(a=>a.pn===S.armPn) || {};
+  let bladeDesc;
+  if(bladeMode()==='list'){
+    const b = (currentBlades().find(x=>x.pn===S.bladePn)||{});
+    bladeDesc = `${b.len||S.bladePn} · 304 SS marine-grade blade`;
+  } else {
+    bladeDesc = `${(HD_BLADES[S.bladeSeries]||{name:''}).name} · ${S.bladeLen}″`;
+  }
+  const bom = [
+    {role:'Motor', pn, desc:motor.name, note:`${S.voltage} · ${S.park}-hand park · ${S.sweep}° sweep · ${S.shaft.replace('in','″')} shaft${S.motor==='4A'?' · '+S.color:''}${S.motor==='4R'&&S.switchInstalled?' · 19S2 switch':''}`},
+    {role:'Arm', pn:S.armPn, desc:`${at==='radial'?'Radial':'Pantograph'} arm · ${armRow.len?armRow.len+' ('+armRow.mm+'mm)':''}`, note:'304 SS, powder-coated black. Supplied dry.'},
+    {role:'Blade', pn:S.bladePn, desc:bladeDesc, note: bladeMode()==='list'?'Universal J-Hook / Saddle compatible':'Per series spec'}
+  ];
+  const acc = [
+    {role:'Wet Kit', pn:WET_KIT[at], desc:`Wet kit for ${at==='radial'?'radial':'pantograph'} arms`, note:'Spray nozzle + tubing + retainer clips + instructions'},
+    ...((S.motor==='4A'||S.motor==='4RCE'||S.motor==='4R')?[{role:'Hardware', pn:'400297–400299', desc:'Motor mounting hardware', note:'M16 nut, stainless spacer, rubber washers'}]:[]),
+    ...(S.motor==='MD'&&at==='panto'?[{role:'Panto Kit', pn:'SP30260003', desc:'Slave pivot adapter', note:'Required for pantograph arms with MD Compact Drive'}]:[]),
+    ...(S.motor==='DD'&&DD_PIVOT_SHAFT[S.shaft]?[{role:'Pivot Shaft', pn:DD_PIVOT_SHAFT[S.shaft], desc:`Dual Drive pivot shaft · ${S.shaft.replace('in','″')}`, note:'Required for DD systems — matched to selected shaft length'}]:[]),
+    ...(S.motor==='4R'&&!S.switchInstalled?[{role:'Switch Kit', pn:'400258', desc:'Optional 2-speed dash switch', note:'Park / Low / High'}]:[])
+  ];
+  const pnParts = pn.split('.');
+  const pnSegsHTML = pnParts.map((p,i)=>{
+    const hi = i%2===1;
+    return `<div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+      <div style="font-family:'SFMono-Regular',Menlo,Consolas,monospace;font-size:17px;font-weight:600;
+        background:${hi?'rgba(0,87,255,0.30)':'rgba(255,255,255,0.08)'};
+        color:${hi?'#BFD3FF':'#E8EEFF'};
+        padding:8px 13px;border-radius:6px;min-width:36px;text-align:center;
+        border:1px solid ${hi?'rgba(0,87,255,0.55)':'rgba(255,255,255,0.12)'}">${h(p)}</div>
+      <div style="font-size:9px;color:rgba(255,255,255,0.5);text-align:center;max-width:64px;
+        letter-spacing:.5px;text-transform:uppercase;font-weight:700">Seg ${i+1}</div>
+    </div>${i<pnParts.length-1?'<div style=\"font-family:monospace;font-size:17px;color:rgba(255,255,255,0.3);padding-bottom:20px\">·</div>':''}`;
+  }).join('');
+  const geom = S.system==='radial'?'Radial':S.system==='panto'?'Panto':S.system==='bent'?'Bent Radial':(at==='radial'?'Radial':'Pantograph');
+  const today = new Date().toLocaleDateString();
+
+  return `<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<title>Wiper Express Wiper Spec Sheet — ${pn}</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Inter","SF Pro Display",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,sans-serif;color:#0A1A2F;background:#F4F6F9;font-size:14px;line-height:1.55;padding:0;-webkit-font-smoothing:antialiased}
+.page{max-width:860px;margin:0 auto;padding:24px;background:#fff}
+header.brand-bar{background:#fff;color:#0A1A2F;padding:20px 26px;display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid #E5E9F0;border-top:5px solid #0057FF}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-mark{width:40px;height:40px;background:#0057FF;border-radius:8px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:18px;letter-spacing:-0.04em;box-shadow:0 4px 12px rgba(0,87,255,0.25)}
+.brand-name{font-weight:800;font-size:20px;letter-spacing:-0.01em;color:#0A1A2F}
+.brand-tag{color:#0057FF;font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-top:2px;font-weight:700}
+.doc-title{text-align:right}
+.doc-title .t{font-size:18px;font-weight:800;letter-spacing:-0.01em}
+.doc-title .s{font-size:11px;color:#5A6B82;letter-spacing:1.5px;text-transform:uppercase;margin-top:3px;font-weight:700}
+h2{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#5A6B82;
+   margin:28px 0 12px;padding-bottom:10px;border-bottom:2px solid #0057FF}
+.pn-builder{background:linear-gradient(135deg,#0A1A2F 0%,#1E3A66 100%);border-radius:14px;padding:22px 26px;color:#fff;margin-top:8px;box-shadow:0 12px 36px rgba(0,87,255,0.18);position:relative;overflow:hidden}
+.pn-builder::before{content:"";position:absolute;top:0;right:0;width:180px;height:180px;background:radial-gradient(circle,rgba(0,87,255,0.35),transparent 65%);pointer-events:none}
+.pn-builder-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:#4D85FF;margin-bottom:16px;position:relative;z-index:1}
+.pn-segs{display:flex;flex-wrap:wrap;gap:5px;align-items:flex-end;margin-bottom:14px;position:relative;z-index:1}
+.pn-full{font-family:"SFMono-Regular",Menlo,Consolas,monospace;font-size:22px;font-weight:700;color:#fff;
+   background:rgba(0,87,255,0.18);padding:16px 20px;border-radius:8px;
+   border:1px solid rgba(0,87,255,0.4);letter-spacing:1px;position:relative;z-index:1}
+.spec-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
+.spec-tile{background:#F4F6F9;border-radius:10px;padding:12px 14px;border:1px solid #E5E9F0}
+.spec-k{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#5A6B82;margin-bottom:4px}
+.spec-v{font-size:15px;font-weight:800;color:#0A1A2F;letter-spacing:-0.01em}
+table.bom{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px;border:1px solid #E5E9F0;border-radius:10px;overflow:hidden}
+.bom th{text-align:left;padding:11px 14px;background:#0A1A2F;color:#4D85FF;font-size:10px;font-weight:800;
+   text-transform:uppercase;letter-spacing:1.2px}
+.bom td{padding:12px 14px;border-bottom:1px solid #E5E9F0;vertical-align:top}
+.bom tr:last-child td{border-bottom:none}
+.bom-role{font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:#0A1A2F}
+.bom-pn{font-family:"SFMono-Regular",Menlo,Consolas,monospace;font-size:12.5px;font-weight:700;color:#0057FF}
+.bom-note{font-size:11px;color:#5A6B82;margin-top:2px;line-height:1.5}
+.wire-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid #E5E9F0}
+.wire-row:last-child{border-bottom:none}
+.wire-dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;border:1px solid rgba(10,26,47,0.15)}
+.wire-func{font-size:13px;color:#0A1A2F;font-weight:500}
+.contact{background:linear-gradient(135deg,#0A1A2F 0%,#1E3A66 100%);color:#fff;padding:20px 26px;margin-top:28px;border-radius:14px;box-shadow:0 12px 36px rgba(0,87,255,0.18);position:relative;overflow:hidden}
+.contact::before{content:"";position:absolute;top:0;right:0;width:160px;height:160px;background:radial-gradient(circle,rgba(0,87,255,0.35),transparent 65%);pointer-events:none}
+.contact .hd{color:#4D85FF;font-size:11px;letter-spacing:1.8px;text-transform:uppercase;font-weight:800;margin-bottom:8px;position:relative;z-index:1}
+.contact .big{font-weight:800;color:#fff;font-size:15px;position:relative;z-index:1;letter-spacing:-0.01em}
+.contact .mid{font-size:13px;color:rgba(255,255,255,0.78);margin-top:5px;position:relative;z-index:1}
+.footer{margin-top:18px;padding-top:14px;border-top:1px solid #E5E9F0;font-size:10px;color:#5A6B82;text-align:center;letter-spacing:.5px}
+@media print{@page{size:letter;margin:0.4in}header.brand-bar,.pn-builder,.contact,.bom th{-webkit-print-color-adjust:exact;print-color-adjust:exact;color-adjust:exact}}
+</style>
+</head><body>
+<header class="brand-bar">
+  <div class="brand">
+    <div class="brand-mark">WX</div>
+    <div>
+      <div class="brand-name">Wiper Express</div>
+      <div class="brand-tag">Aftermarket Wiper Specialists</div>
+    </div>
+  </div>
+  <div class="doc-title">
+    <div class="t">Wiper System Spec Sheet</div>
+    <div class="s">${h(motor.segment)} · Generated ${today}</div>
+  </div>
+</header>
+<div class="page">
+
+<h2>Motor Part Number</h2>
+<div class="pn-builder">
+  <div class="pn-builder-title">Segmented Build</div>
+  <div class="pn-segs">${pnSegsHTML}</div>
+  <div style="font-size:10px;color:rgba(255,255,255,0.4);margin:12px 0 6px;letter-spacing:1.5px;text-transform:uppercase">Complete Motor PN</div>
+  <div class="pn-full">${h(pn)}</div>
+</div>
+
+<h2>System Specifications</h2>
+<div class="spec-grid">
+  <div class="spec-tile"><div class="spec-k">Motor</div><div class="spec-v">${h(motor.name)}</div></div>
+  <div class="spec-tile"><div class="spec-k">Geometry</div><div class="spec-v">${h(geom)}</div></div>
+  <div class="spec-tile"><div class="spec-k">Wipe Angle</div><div class="spec-v">${S.sweep}°</div></div>
+  ${sol?`<div class="spec-tile"><div class="spec-k">Wiped Area</div><div class="spec-v">${(sol.pct*100).toFixed(1)}%</div></div>`:''}
+  ${sol?`<div class="spec-tile"><div class="spec-k">Required Torque</div><div class="spec-v">${sol.Torque.toFixed(2)} N·m</div></div>`:''}
+  <div class="spec-tile"><div class="spec-k">Voltage</div><div class="spec-v">${h(S.voltage)}</div></div>
+  <div class="spec-tile"><div class="spec-k">Park</div><div class="spec-v">${h(S.park)}-hand${S.parkCircuit&&(S.motor==='MD'||S.motor==='DD')?' / '+S.parkCircuit:''}</div></div>
+  <div class="spec-tile"><div class="spec-k">Shaft</div><div class="spec-v">${h(S.shaft.replace('in','″'))}</div></div>
+  ${sol?`<div class="spec-tile"><div class="spec-k">Pivot from edge</div><div class="spec-v">${fmtLen(sol.Pivot,0)}</div></div>`:''}
+  ${S.W&&sol?`<div class="spec-tile"><div class="spec-k">Windshield</div><div class="spec-v">${S.W}×${S.H} mm</div></div>`:''}
+</div>
+
+${sol?`<h2>Sweep Diagram</h2>
+<div style="background:#F4F6F9;border:1px solid #E5E9F0;border-radius:10px;padding:16px">${svgDiagram(sol.geom,{w:680,h:340})}</div>`:''}
+
+<h2>Bill of Materials</h2>
+<table class="bom">
+<thead><tr><th>Component</th><th>Part Number</th><th>Description</th><th>Notes</th></tr></thead>
+<tbody>${bom.map(r=>`<tr><td class="bom-role">${h(r.role)}</td><td class="bom-pn">${h(r.pn)}</td><td>${h(r.desc)}</td><td class="bom-note">${h(r.note)}</td></tr>`).join('')}</tbody>
+</table>
+
+<h2>Accessories &amp; Hardware</h2>
+<table class="bom">
+<thead><tr><th>Item</th><th>Part Number</th><th>Description</th><th>Notes</th></tr></thead>
+<tbody>${acc.map(r=>`<tr><td class="bom-role">${h(r.role)}</td><td class="bom-pn">${h(r.pn)}</td><td>${h(r.desc)}</td><td class="bom-note">${h(r.note)}</td></tr>`).join('')}</tbody>
+</table>
+
+<h2>Wiring Color Code — ${h(motor.name)}</h2>
+<div style="background:#F4F6F9;border:1px solid #E5E9F0;border-radius:10px;padding:16px 20px">
+${motor.wiring.map(w=>`<div class="wire-row"><div class="wire-dot" style="background:${w.c};${w.bdr?'border:1.5px solid #888':''}"></div><div class="wire-func">${h(w.f)}</div></div>`).join('')}
+<div style="font-size:11px;color:#5A6B82;margin-top:10px">16 AWG, 12″ leads. Fusing: ${h(motor.fusing)}. Isolated ground required.</div>
+</div>
+
+<div class="contact">
+  <div class="hd">Contact to Order</div>
+  <div class="big">Wiper Express — Aftermarket Wiper Specialists</div>
+  <div class="mid">wiperexpress.com &nbsp;·&nbsp; sales@wiperexpress.com &nbsp;·&nbsp; (800) 528-3048</div>
+</div>
+
+<div class="footer">© Wiper Express · All rights reserved · wiperexpress.com</div>
+</div>
+</body></html>`;
+}
+
+function downloadSpecSheet(){
+  const pn = buildPN();
+  const fileName = `WiperExpress_SpecSheet_${pn.replace(/[^A-Za-z0-9_-]/g,'_')}.html`;
+  const doc = buildSpecSheetHTML();
+  const blob = new Blob([doc], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(()=>{document.body.removeChild(a); URL.revokeObjectURL(url);}, 100);
+}
+
+/* PN segments visualizer */
+function pnSegments(){
+  const m = S.motor; if(!m) return '';
+  const motor = MOTORS[m]; if(!motor) return '';
+  const pn = motor.buildPN(S);
+  // Best-effort segmentation by '.'
+  const parts = pn.split('.');
+  return parts.map((p,i)=>`<div class="pn-seg"><div class="pn-seg-v ${i%2===1?'hi':''}">${h(p)}</div><div class="pn-seg-l">Seg ${i+1}</div></div>${i<parts.length-1?'<div class="pn-sep">·</div>':''}`).join('');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   8. CONTROLLER
+   ═══════════════════════════════════════════════════════════════ */
+function setUnit(u){
+  if(u===unit) return;
+  unit = u;
+  render();
+}
+function updInput(key, val){
+  let v = parseFloat(val);
+  if(isNaN(v)) return;
+  if(unit==='in') v = v*MM_PER_IN;
+  S[key] = v;
+  // Re-run selector live so user sees impact, but only if we have valid W/H
+  if(S.selectorRan && S.W>0 && S.H>0) runSelector();
+}
+function runAndAdvance(){
+  if(!(S.W>0 && S.H>0)){ alert('Enter positive Width and Height.'); return; }
+  runSelector();
+  // Advance to the 'system' step in the current flow (index depends on intro+selector)
+  const sysIdx = getFlow().findIndex(s=>s.id==='system');
+  if(sysIdx >= 0) S.step = sysIdx;
+  render();
+}
+function pickSystem(k){
+  S.system = k;
+  prefillFromSelector();
+  render();
+}
+function setArmType(at){
+  S.armType = at;
+  S.armPn = null;
+  S.bladePn = null;
+  // Reset blade series so next render picks a compatible one
+  if(bladeMode()==='series'){
+    const seriesKeys = Object.keys(HD_BLADES).filter(k=>HD_BLADES[k].arms.includes(at));
+    if(!S.bladeSeries || !seriesKeys.includes(S.bladeSeries)) S.bladeSeries = seriesKeys[0] || null;
+  }
+  render();
+}
+function pickMotor(k){
+  S.motor = k;
+  const motor = MOTORS[k];
+  if(!motor.shaftOptions.includes(S.shaft)) S.shaft = motor.shaftOptions[Math.floor(motor.shaftOptions.length/2)];
+  const angles = anglesForMotor(k);
+  if(!angles.includes(S.sweep)) S.sweep = angles.reduce((a,b)=>Math.abs(b-S.sweep)<Math.abs(a-S.sweep)?b:a, angles[0]);
+  prefillArm(); prefillBlade();
+  render();
+}
+function next(){ if(S.step < getFlow().length-1){ S.step++; render(); } }
+function back(){ if(S.step > 0){ S.step--; render(); } }
+function goStep(i){
+  // Allow jumping to intro from anywhere; otherwise only backward
+  if(i===0 || i<=S.step){ S.step=i; render(); }
+}
+function resetAll(){ S = freshState(); render(); }
+
+/* ═══════════════════════════════════════════════════════════════
+   9. SIDEBAR + HEADER
+   ═══════════════════════════════════════════════════════════════ */
+function renderHeader(){
+  const nav = document.getElementById('hdrNav');
+  nav.innerHTML = getFlow().map((step,i)=>`
+    <button class="hdr-step ${i<S.step?'done':i===S.step?'active':''}" onclick="goStep(${i})">
+      <div class="num">${i<S.step?'✓':i+1}</div>
+      <span>${step.title.split(' ')[0]}</span>
+    </button>
+    ${i<getFlow().length-1?'<div class="hdr-arr">›</div>':''}
+  `).join('');
+  document.getElementById('stepNum').textContent = S.step+1;
+  document.getElementById('stepTitle').textContent = getFlow()[S.step].title;
+  document.getElementById('stepDesc').textContent = getFlow()[S.step].desc;
+  const prog = document.getElementById('prog');
+  prog.innerHTML = getFlow().map((_,i)=>`<div class="pip ${i<S.step?'done':i===S.step?'active':''}"></div>`).join('');
+}
+function sbSection(label, rows){
+  const has = rows.some(r=>r.v);
+  if(!has) return '';
+  return `<div class="sb-section"><div class="sb-label">${label}</div>${
+    rows.filter(r=>r.v).map(r=>`<div class="sb-row"><span class="sb-k">${h(r.k)}</span><span class="${r.pn?'sb-pn':'sb-v'}">${h(r.v)}</span></div>`).join('')
+  }</div>`;
+}
+function renderSidebar(){
+  const sol = currentSolverResult();
+  const motor = currentMotor();
+  let html = '';
+  html += sbSection('Path', [
+    {k:'Mode', v: S.expertMode===true?'Expert (skip selector)' : S.expertMode===false?'Guided (windshield specs)' : null}
+  ]);
+  if(S.expertMode === false){
+    html += sbSection('Windshield', [
+      {k:'Width',  v:S.W?fmtLen(S.W,0):null},
+      {k:'Height', v:S.H?fmtLen(S.H,0):null},
+      {k:'Glass',  v:S.glass}
+    ]);
+  }
+  if(sol){
+    html += sbSection('Computed', [
+      {k:'Geometry', v:S.system==='radial'?'Radial':S.system==='panto'?'Panto':S.system==='bent'?'Bent Radial':null},
+      {k:'Family',   v:recommendedFamily()},
+      {k:'Arm L',    v:fmtLen(sol.ArmL,0)},
+      {k:'Blade L',  v:fmtLen(sol.BladeL,0)},
+      {k:'Angle',    v:sol.Angle+'°'},
+      {k:'Torque',   v:sol.Torque.toFixed(2)+' N·m'}
+    ]);
+  }
+  if(S.motor){
+    html += sbSection('Motor', [
+      {k:'Model',   v:motor?motor.name:null},
+      {k:'Voltage', v:S.voltage},
+      {k:'Park',    v:S.park?S.park+'-hand':null},
+      {k:'Sweep',   v:S.sweep+'°'},
+      {k:'Shaft',   v:S.shaft?S.shaft.replace('in','″'):null},
+      {k:'Part #',  v:buildPN(), pn:true}
+    ]);
+  }
+  if(S.armPn || S.bladePn){
+    html += sbSection('Arm & Blade', [
+      {k:'Arm',   v:S.armPn,   pn:true},
+      {k:'Blade', v:S.bladePn, pn:true}
+    ]);
+  }
+  document.getElementById('sidebarBody').innerHTML = html ||
+    `<div class="sb-section"><div class="sb-empty">Make your first selection to begin.</div></div>`;
+  const status = document.getElementById('sidebarStatus');
+  if(S.bladePn && S.armPn && S.motor){
+    status.innerHTML = `<div class="sb-dot" style="background:var(--ok)"></div><span style="color:var(--ok);font-weight:700">✓ System Complete</span>`;
+  } else if(S.selectorRan){
+    status.innerHTML = `<div class="sb-dot" style="background:var(--gold)"></div><span style="color:var(--gold-d);font-weight:700">In progress…</span>`;
+  } else {
+    status.innerHTML = `<div class="sb-dot" style="background:var(--mid)"></div><span style="color:var(--mid)">Begin selecting to build your system</span>`;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   10. MAIN RENDER
+   ═══════════════════════════════════════════════════════════════ */
+function render(){
+  renderHeader();
+  const id = getFlow()[S.step].id;
+  const html =
+    id==='intro'    ? renderIntro() :
+    id==='selector' ? renderSelector() :
+    id==='system'   ? renderSystemChoice() :
+    id==='motor'    ? renderMotor() :
+    id==='config'   ? renderConfig() :
+    id==='arm'      ? renderArm() :
+    id==='blade'    ? renderBlade() :
+    id==='summary'  ? renderSummary() : '';
+  document.getElementById('root').innerHTML = html;
+  renderSidebar();
+}
+
+function setExpertMode(expert){
+  S.expertMode = expert;
+  S.step = 1;  // advance into the flow (selector if guided, motor if expert)
+  if(expert){
+    // Expert path has no windshield/system geometry data
+    S.system = null;
+    if(!S.armType) S.armType = 'radial';
+    if(!S.motor){ S.motor = '4R'; }
+    const motor = MOTORS[S.motor];
+    if(!motor.shaftOptions.includes(S.shaft)) S.shaft = motor.shaftOptions[Math.floor(motor.shaftOptions.length/2)];
+    const angles = anglesForMotor(S.motor);
+    if(!angles.includes(S.sweep)) S.sweep = angles.reduce((a,b)=>Math.abs(b-S.sweep)<Math.abs(a-S.sweep)?b:a, angles[0]);
+  }
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
