@@ -43,19 +43,16 @@ button,input,select{font-family:inherit}
   position:sticky;top:0;z-index:100;box-shadow:0 1px 2px rgba(10,26,47,0.04)}
 .hdr-inner{max-width:1280px;margin:0 auto;padding:0 24px;display:flex;align-items:center;
   height:68px;gap:20px}
-.brand{display:flex;align-items:center;gap:12px}
+.brand{display:flex;align-items:center;gap:12px;flex-shrink:0}
 .brand svg{display:block}
-.brand-mark{width:38px;height:38px;background:var(--gold);border-radius:8px;
-  display:grid;place-items:center;color:#fff;font-weight:800;font-size:18px;
-  letter-spacing:-0.04em;box-shadow:0 4px 12px rgba(0,87,255,0.25)}
-.brand-name{font-weight:800;font-size:18px;letter-spacing:-0.01em;color:var(--black)}
-.brand-tag{color:var(--gold);font-size:9.5px;letter-spacing:2px;text-transform:uppercase;
-  margin-top:2px;font-weight:700}
-.hdr-divider{width:1px;height:28px;background:var(--line)}
-.hdr-nav{display:flex;align-items:center;gap:0;flex:1}
+.brand-logo{display:block;height:38px;width:auto;max-width:220px}
+.hdr-divider{width:1px;height:28px;background:var(--line);flex-shrink:0}
+.hdr-nav{display:flex;align-items:center;gap:0;flex:1 1 auto;min-width:0;
+  overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+.hdr-nav::-webkit-scrollbar{display:none}
 .hdr-step{display:flex;align-items:center;gap:8px;background:none;border:0;color:var(--mid);
   font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.1px;
-  padding:6px 12px;cursor:pointer;border-radius:6px;transition:.15s}
+  padding:6px 12px;cursor:pointer;border-radius:6px;transition:.15s;flex-shrink:0;white-space:nowrap}
 .hdr-step:hover{color:var(--black);background:var(--lt)}
 .hdr-step.done{color:var(--ink-2)}
 .hdr-step.active{background:var(--blue-soft);color:var(--gold)}
@@ -65,13 +62,14 @@ button,input,select{font-family:inherit}
 .hdr-step.done .num{background:var(--gold);color:#fff}
 .hdr-step.active .num{background:var(--gold);color:#fff}
 .hdr-arr{color:var(--line-d);font-size:14px;padding:0 4px}
-.hdr-actions{display:flex;gap:8px;align-items:center}
+.hdr-actions{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.hdr-actions > span{white-space:nowrap}
 .market-toggle{display:flex;background:var(--lt);border:1px solid var(--line);border-radius:6px;overflow:hidden;padding:3px}
 .market-toggle button{background:none;border:0;color:var(--mid);font-size:11px;
   font-weight:700;letter-spacing:1.1px;text-transform:uppercase;padding:7px 12px;cursor:pointer;border-radius:4px}
 .market-toggle button.active{background:var(--gold);color:#fff}
 .hdr-btn{background:var(--lt);color:var(--black);border:1px solid var(--line);padding:9px 14px;font-size:11px;
-  font-weight:700;letter-spacing:1.1px;text-transform:uppercase;cursor:pointer;border-radius:6px;transition:.15s}
+  font-weight:700;letter-spacing:1.1px;text-transform:uppercase;cursor:pointer;border-radius:6px;transition:.15s;white-space:nowrap}
 .hdr-btn:hover{background:var(--gold);color:#fff;border-color:var(--gold)}
 
 /* ── STEP BAND ── */
@@ -90,11 +88,13 @@ button,input,select{font-family:inherit}
 /* ── PAGE LAYOUT ── */
 .page{max-width:1280px;margin:0 auto;padding:24px;display:grid;
   grid-template-columns:1fr 320px;gap:24px;align-items:start}
+.content{min-width:0}
+.sidebar{min-width:0}
 @media(max-width:980px){.page{grid-template-columns:1fr}.sidebar{display:none}}
 
 /* ── CARDS ── */
 .card{background:var(--white);border:1px solid var(--line);border-radius:14px;
-  padding:24px 26px;margin-bottom:14px;box-shadow:var(--shadow)}
+  padding:24px 26px;margin-bottom:14px;box-shadow:var(--shadow);min-width:0}
 .card-hd{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;
   color:var(--black);margin-bottom:14px;display:flex;align-items:center;gap:10px;
   padding-bottom:12px;border-bottom:1px solid var(--line)}
@@ -337,18 +337,139 @@ button,input,select{font-family:inherit}
 .print-only .pheader{display:flex;justify-content:space-between;align-items:flex-end}
 .print-only h1{font-size:26px;font-weight:800;letter-spacing:-0.01em;color:var(--black)}
 .print-only .psub{color:var(--mid);font-size:12px;letter-spacing:1px;text-transform:uppercase;font-weight:700}
+
+/* ── RESPONSIVE OVERRIDES (mobile-first additive layer) ── */
+
+/* Tablet & below: header tightens, step nav scrolls if it overflows */
+@media (max-width:1024px){
+  .hdr-inner{padding:0 18px;gap:14px}
+  .step-band-inner{padding:18px 18px}
+  .page{padding:18px;gap:18px}
+  .card{padding:20px 22px}
+}
+
+/* Drop the long tagline before it crowds the header */
+@media (max-width:900px){
+  .hdr-actions > span{display:none}
+}
+
+/* Tablet portrait: collapse header, allow step pills to scroll */
+@media (max-width:768px){
+  .hdr-inner{height:60px;padding:0 14px;gap:10px}
+  .brand-logo{height:32px;max-width:170px}
+  .hdr-divider{display:none}
+  .hdr-nav{flex:1 1 auto;min-width:0;overflow-x:auto;overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;mask-image:linear-gradient(90deg,#000 88%,transparent)}
+  .hdr-nav::-webkit-scrollbar{display:none}
+  .hdr-step{flex:0 0 auto;padding:8px 10px}
+  .hdr-step .num{width:24px;height:24px;font-size:11px}
+  .hdr-arr{padding:0 2px}
+  .hdr-btn{padding:10px 12px;font-size:11px}
+  /* Sidebar already hides at 980px; nudge sticky offset for new header height */
+  .sidebar{top:72px}
+
+  .step-band-inner{padding:16px 14px;gap:14px;flex-wrap:wrap}
+  .step-num{width:38px;height:38px;font-size:16px;border-radius:9px}
+  .step-titles{flex:1 1 200px;min-width:0}
+  .step-titles h1{font-size:19px}
+  .step-titles p{font-size:12.5px}
+  .prog{margin-left:0;flex:1 1 100%;justify-content:flex-start}
+
+  .page{padding:14px 12px;gap:14px}
+  .card{padding:18px 16px;border-radius:12px}
+  /* Allow wide internal content (BOM table, PN builder) to scroll within the card */
+  .card{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+  /* Motor card: drop the right-reservation, let badge wrap underneath */
+  .motor-top{padding-right:0}
+  .motor-card.recommended::after{position:static;display:inline-block;margin-top:8px;align-self:flex-start}
+  .motor-card{padding:18px 16px}
+  .motor-specs{grid-template-columns:1fr 1fr;gap:6px}
+
+  .diagram-spec{grid-template-columns:1fr 1fr}
+
+  /* BOM table: tighter cells so it fits / scrolls cleanly */
+  .bom th,.bom td{padding:9px 10px}
+  .bom-pn{font-size:11.5px}
+
+  /* PN builder: prevent giant code from overflowing */
+  .pn-builder{padding:18px 16px}
+  .pn-full{font-size:16px;padding:14px 14px;letter-spacing:.5px;word-break:break-all;overflow-wrap:anywhere}
+  .pn-seg-v{font-size:15px;padding:7px 10px;min-width:30px}
+  .pn-sep{font-size:15px}
+
+  .intro-card{padding:26px 20px}
+  .intro-card h3{font-size:20px}
+  .intro-icon{font-size:36px;margin-bottom:12px}
+
+  .nav-row .btn-reset{margin-left:0}
+}
+
+/* Phone: single column everywhere, larger tap targets */
+@media (max-width:480px){
+  .hdr-inner{height:56px;padding:0 12px;gap:8px}
+  .brand-logo{height:28px;max-width:140px}
+  .hdr-actions{gap:6px}
+  .hdr-btn{padding:9px 10px;font-size:10.5px;letter-spacing:.8px}
+
+  .step-band-inner{padding:14px 12px;gap:10px}
+  .step-num{width:34px;height:34px;font-size:15px;border-radius:8px}
+  .step-titles h1{font-size:17px}
+  .step-titles p{font-size:12px}
+  .pip{width:24px;height:3px}
+
+  .page{padding:12px 10px;gap:12px}
+  .card{padding:16px 14px;border-radius:10px}
+  .card-hd{font-size:12px;padding-bottom:10px;margin-bottom:12px}
+
+  .motor-name{font-size:15px}
+  .motor-desc{font-size:12px}
+  .motor-specs{grid-template-columns:1fr 1fr}
+  .ms{padding:8px 10px}
+
+  .angle-pill{padding:11px 16px;font-size:13.5px}
+
+  .btn{padding:12px 18px;font-size:12.5px;width:auto}
+  .nav-row{gap:8px}
+  .nav-row .btn{flex:1 1 auto;justify-content:center;min-width:0}
+
+  .pn-builder{padding:16px 14px}
+  .pn-full{font-size:14px;padding:12px}
+
+  .spec-grid{gap:8px}
+  .spec-tile{padding:10px 12px}
+  .spec-v{font-size:14px}
+
+  /* Sidebar (hidden by existing 980px rule) — defensive */
+  .sidebar{top:60px}
+}
+
+/* Very small phones */
+@media (max-width:360px){
+  .brand-logo{height:26px;max-width:120px}
+  .hdr-btn{padding:8px 9px;font-size:10px}
+  .step-titles h1{font-size:16px}
+  .motor-specs,.diagram-spec{grid-template-columns:1fr}
+  .pn-full{font-size:13px}
+}
+
+/* Larger tap targets on touch pointers, regardless of width */
+@media (pointer:coarse){
+  .market-toggle button,.unit-toggle button{min-height:40px;padding:9px 14px}
+  .hdr-btn,.btn-ghost,.btn-print,.btn-primary{min-height:42px}
+  .seg button{min-height:42px}
+  .angle-pill{min-height:42px}
+  .opt{min-height:56px}
+  .hdr-step{min-height:40px}
+}
 </style>
 </head>
 <body>
 
 <!-- HEADER -->
 <header class="hdr"><div class="hdr-inner">
-  <a class="brand" href="#" style="text-decoration:none">
-    <div class="brand-mark" aria-hidden="true">WX</div>
-    <div>
-      <div class="brand-name">Wiper Express</div>
-      <div class="brand-tag">Aftermarket Wiper Specialists</div>
-    </div>
+  <a class="brand" href="#" style="text-decoration:none" aria-label="Wiper Express">
+    <img class="brand-logo" src="https://cdn.shopify.com/s/files/1/1127/8952/files/WiperExpress_Logo.png?v=1778598148" alt="Wiper Express" decoding="async">
   </a>
   <div class="hdr-divider"></div>
   <nav class="hdr-nav" id="hdrNav"></nav>
