@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<title>THE CONSTRUCT — OPERATION: REMATCH</title>
+<style>
+:root{
+  --void:#000000;
+  --green:#00ff66;
+  --green-2:#19c95a;
+  --green-d:#0a7a38;
+  --green-dim:#0f8f44;
+  --green-faint:#063d1e;
+  --glow:rgba(0,255,102,0.55);
+  --panel:rgba(0,14,5,0.82);
+  --panel-line:rgba(0,255,102,0.22);
+  --dim:#2f8f57;
+  --ok:#39ff8a;
+  --warn:#caff5a;
+  --err:#ff4d4d;
+  --pill-red:#ff3344;
+  --pill-blue:#33a0ff;
+  --mono:"Share Tech Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--void);
+  color:var(--green);
+  font-family:var(--mono);
+  font-size:16px;
+  line-height:1.6;
+  min-height:100%;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  letter-spacing:0.4px;
+  text-shadow:0 0 6px rgba(0,255,102,0.35);
+}
+
+/* ---- Digital rain ---- */
+#rain{position:fixed;inset:0;z-index:0;display:block;opacity:0.55}
+
+/* ---- Atmosphere: scanlines + flicker + vignette ---- */
+.fx{position:fixed;inset:0;pointer-events:none;z-index:9999}
+.fx.scan{
+  background:repeating-linear-gradient(
+    to bottom,
+    rgba(0,0,0,0) 0px,
+    rgba(0,0,0,0) 2px,
+    rgba(0,0,0,0.30) 3px,
+    rgba(0,0,0,0) 4px);
+  mix-blend-mode:multiply;
+  opacity:0.6;
+}
+.fx.glow{
+  background:radial-gradient(120% 90% at 50% 50%, transparent 50%, rgba(0,0,0,0.7) 100%);
+}
+.fx.flick{
+  background:rgba(0,255,102,0.025);
+  animation:flick 6s steps(60) infinite;
+}
+@keyframes flick{
+  0%,100%{opacity:0.02}
+  3%{opacity:0.06}
+  6%{opacity:0.01}
+  9%{opacity:0.05}
+  50%{opacity:0.02}
+  52%{opacity:0.08}
+  54%{opacity:0.02}
+}
+
+/* ---- Layout ---- */
+.wrap{
+  position:relative;
+  z-index:2;
+  max-width:760px;
+  margin:0 auto;
+  padding:clamp(20px,5vw,56px) clamp(16px,4vw,32px) 80px;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.stage{display:none;animation:fadeIn .5s ease both}
+.stage.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ---- Header strip ---- */
+.classmark{
+  font-weight:400;
+  letter-spacing:3px;
+  font-size:11px;
+  color:var(--green-2);
+  text-transform:uppercase;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:18px;
+  opacity:0.95;
+}
+.classmark::before,.classmark::after{
+  content:"";height:1px;flex:1;
+  background:linear-gradient(90deg,transparent,var(--panel-line),transparent);
+}
+.redbar{
+  display:inline-block;
+  background:rgba(0,40,16,0.6);
+  color:var(--green);
+  font-weight:400;
+  font-size:11px;
+  letter-spacing:3px;
+  padding:4px 12px;
+  border:1px solid var(--green-d);
+  text-transform:uppercase;
+  box-shadow:inset 0 0 12px rgba(0,255,102,0.08);
+}
+
+/* ---- Terminal text ---- */
+.term{
+  font-size:clamp(14px,3.6vw,17px);
+  white-space:pre-wrap;
+  word-break:break-word;
+  min-height:1.6em;
+}
+.term .ln{display:block}
+.term .pre{color:var(--green-2);opacity:0.85}
+.cursor{
+  display:inline-block;width:0.62ch;height:1.05em;
+  background:var(--green);
+  margin-left:2px;vertical-align:-2px;
+  box-shadow:0 0 8px var(--glow);
+  animation:blink 1s steps(2) infinite;
+}
+@keyframes blink{50%{opacity:0}}
+
+h1.title{
+  font-weight:400;
+  font-size:clamp(30px,10vw,60px);
+  letter-spacing:6px;
+  line-height:1.02;
+  margin:6px 0 4px;
+  color:var(--green);
+  text-shadow:0 0 22px var(--glow),0 0 2px var(--green);
+}
+.subtitle{
+  letter-spacing:8px;
+  font-size:clamp(11px,3.2vw,14px);
+  color:var(--green-2);
+  text-transform:uppercase;
+  margin-bottom:26px;
+}
+
+/* ---- Buttons ---- */
+.btn{
+  -webkit-appearance:none;appearance:none;
+  font-family:var(--mono);
+  font-weight:400;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  font-size:14px;
+  color:var(--green);
+  background:rgba(0,20,8,0.7);
+  border:1px solid var(--green-d);
+  padding:15px 24px;
+  border-radius:3px;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+  transition:transform .12s ease,box-shadow .25s ease,border-color .25s ease,color .2s;
+  box-shadow:inset 0 0 18px rgba(0,255,102,0.05);
+  width:100%;
+  margin-top:10px;
+  text-shadow:0 0 6px rgba(0,255,102,0.4);
+}
+.btn:hover,.btn:focus-visible{
+  outline:none;
+  border-color:var(--green);
+  color:#d6ffe6;
+  box-shadow:0 0 22px rgba(0,255,102,0.28),inset 0 0 22px rgba(0,255,102,0.12);
+}
+.btn:active{transform:translateY(1px)}
+.btn::after{
+  content:"";position:absolute;top:0;left:-120%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(0,255,102,0.22),transparent);
+  transform:skewX(-20deg);
+  transition:left .6s ease;
+}
+.btn:hover::after{left:140%}
+.btn[disabled]{opacity:0.4;cursor:not-allowed}
+.btnrow{display:flex;gap:14px;flex-wrap:wrap;margin-top:18px}
+.btnrow .btn{flex:1;min-width:170px;margin-top:0}
+
+/* pill buttons */
+.btn.pill-red{
+  border-color:var(--pill-red);color:#ffd6d9;
+  background:rgba(40,0,4,0.6);text-shadow:0 0 6px rgba(255,51,68,0.5);
+}
+.btn.pill-red:hover{box-shadow:0 0 26px rgba(255,51,68,0.4),inset 0 0 22px rgba(255,51,68,0.15);border-color:#ff5b69;color:#fff}
+.btn.pill-blue{
+  border-color:var(--pill-blue);color:#d6ecff;
+  background:rgba(0,18,40,0.6);text-shadow:0 0 6px rgba(51,160,255,0.5);
+}
+.btn.pill-blue:hover{box-shadow:0 0 26px rgba(51,160,255,0.4),inset 0 0 22px rgba(51,160,255,0.15);border-color:#5cb4ff;color:#fff}
+.pill-label{display:block;font-size:11px;letter-spacing:2px;opacity:0.75;margin-top:4px}
+
+/* ---- Cards (briefing) ---- */
+.card{
+  border:1px solid var(--panel-line);
+  background:var(--panel);
+  border-radius:5px;
+  padding:18px 18px 16px;
+  margin-bottom:14px;
+  position:relative;
+  backdrop-filter:blur(2px);
+  opacity:0;
+  transform:translateY(14px);
+}
+.card.show{animation:cardIn .6s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes cardIn{to{opacity:1;transform:none}}
+.card::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,var(--green),transparent);
+}
+.card .fileno{
+  font-size:11px;letter-spacing:2px;color:var(--green-2);
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:10px;text-transform:uppercase;
+}
+.card .stamp{
+  border:1px solid var(--green-d);color:var(--green-2);
+  font-size:9px;padding:2px 6px;border-radius:2px;letter-spacing:2px;
+}
+.card h3{
+  font-size:15px;letter-spacing:1.5px;
+  color:#d6ffe6;margin-bottom:10px;text-transform:uppercase;
+}
+.card .row{display:flex;justify-content:space-between;gap:14px;padding:5px 0;border-bottom:1px dotted rgba(15,143,68,0.3);font-size:14px}
+.card .row:last-child{border-bottom:0}
+.card .row .k{color:var(--dim)}
+.card .row .v{color:var(--green);text-align:right}
+.card .row .v.hot{color:var(--warn)}
+.card .row .v.red{color:var(--err)}
+.redact{
+  background:#021107;color:#021107;
+  border-radius:2px;padding:0 6px;user-select:none;
+  box-shadow:inset 0 0 0 1px rgba(15,143,68,0.3);
+}
+
+/* ---- Puzzle shell ---- */
+.progress{
+  display:flex;gap:8px;margin-bottom:22px;
+}
+.progress .pip{
+  flex:1;height:4px;border-radius:2px;background:rgba(15,143,68,0.22);
+  position:relative;overflow:hidden;
+}
+.progress .pip.done{background:var(--green);box-shadow:0 0 10px var(--glow)}
+.progress .pip.cur::after{
+  content:"";position:absolute;inset:0;background:var(--green);
+  animation:pulse 1.4s ease-in-out infinite;opacity:0.5;
+}
+@keyframes pulse{50%{opacity:1}}
+.exhibit{
+  letter-spacing:3px;font-size:12px;
+  color:var(--green-2);text-transform:uppercase;margin-bottom:6px;
+}
+.prompt{font-size:clamp(15px,4vw,18px);color:#cfffe2;margin-bottom:20px}
+.hint{color:var(--dim);font-size:13px;margin-top:6px}
+
+/* Puzzle 1 — signal */
+.signal{
+  display:flex;gap:10px;justify-content:center;flex-wrap:wrap;
+  margin:10px 0 26px;
+}
+.glyph{
+  width:54px;height:64px;border:1px solid var(--panel-line);
+  border-radius:4px;display:flex;align-items:center;justify-content:center;
+  font-size:22px;
+  background:var(--panel);color:var(--green);
+  box-shadow:inset 0 0 14px rgba(0,255,102,0.06);
+}
+.glyph.missing{
+  color:var(--green);border-color:var(--green);border-style:dashed;
+  animation:miss 1.3s ease-in-out infinite;
+}
+@keyframes miss{50%{box-shadow:0 0 18px var(--glow)}}
+.choices{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.choice{
+  font-weight:400;font-size:22px;
+  padding:18px;border:1px solid var(--panel-line);border-radius:4px;
+  background:var(--panel);color:var(--green);cursor:pointer;
+  transition:all .15s ease;text-align:center;
+}
+.choice:hover{border-color:var(--green);box-shadow:0 0 16px rgba(0,255,102,0.2)}
+.choice.right{border-color:var(--ok);color:var(--ok);box-shadow:0 0 18px rgba(57,255,138,0.3)}
+.choice.wrong{border-color:var(--err);color:var(--err);animation:shake .35s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* Puzzle 2 — scramble */
+.scrambled{
+  font-weight:400;letter-spacing:4px;
+  font-size:clamp(18px,6vw,30px);text-align:center;color:var(--green);
+  margin:6px 0 22px;text-shadow:0 0 16px var(--glow);word-break:break-word;
+}
+.field{
+  width:100%;font-family:var(--mono);font-size:16px;letter-spacing:2px;
+  text-transform:uppercase;text-align:center;
+  color:var(--green);background:rgba(0,12,5,0.85);
+  border:1px solid var(--panel-line);border-radius:4px;
+  padding:16px;outline:none;transition:border-color .2s,box-shadow .2s;
+}
+.field:focus{border-color:var(--green);box-shadow:0 0 18px rgba(0,255,102,0.2)}
+.field.bad{border-color:var(--err);animation:shake .35s}
+.field::placeholder{color:var(--dim)}
+
+/* feedback line */
+.feedback{
+  min-height:1.4em;margin-top:16px;font-size:14px;letter-spacing:1px;
+}
+.feedback.ok{color:var(--ok);text-shadow:0 0 12px rgba(57,255,138,0.3)}
+.feedback.no{color:var(--err)}
+
+/* ---- Verdict ---- */
+.verdict{
+  border:1px solid var(--panel-line);background:var(--panel);
+  border-radius:5px;padding:clamp(18px,5vw,30px);
+  position:relative;
+}
+.verdict .seal{
+  position:absolute;right:14px;top:14px;
+  font-weight:400;font-size:10px;letter-spacing:2px;
+  color:var(--green-2);border:1px solid var(--green-d);padding:3px 8px;
+  border-radius:2px;
+}
+.verdict .body{font-size:clamp(14px,3.8vw,17px);white-space:pre-wrap;min-height:1.6em}
+.verdict .sig{margin-top:14px;text-align:right;
+  letter-spacing:4px;color:var(--green-2);font-size:20px;opacity:0}
+.verdict .sig.show{opacity:1;transition:opacity .8s ease}
+
+/* ---- Final confirm ---- */
+.confirm-box{text-align:center}
+.bigcheck{
+  font-size:64px;color:var(--ok);text-shadow:0 0 30px rgba(57,255,138,0.5);
+  animation:popIn .5s cubic-bezier(.2,1.4,.4,1) both;margin-bottom:10px;
+}
+@keyframes popIn{from{transform:scale(0.3);opacity:0}to{transform:scale(1);opacity:1}}
+
+.err-toast{
+  margin-top:16px;min-height:1.4em;color:var(--err);font-size:14px;
+  letter-spacing:1px;opacity:0;transition:opacity .12s;
+}
+.err-toast.show{opacity:1}
+.err-count{color:var(--dim);font-size:11px;margin-top:8px;letter-spacing:2px}
+
+.foot{
+  margin-top:28px;font-size:10px;letter-spacing:3px;color:rgba(15,143,68,0.6);
+  text-transform:uppercase;text-align:center;
+}
+
+@media (max-width:420px){
+  .glyph{width:46px;height:56px;font-size:18px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms!important;animation-iteration-count:1!important}
+  .fx.flick{display:none}
+  #rain{display:none}
+}
+</style>
+</head>
+<body>
+<canvas id="rain"></canvas>
+<div class="fx scan"></div>
+<div class="fx flick"></div>
+<div class="fx glow"></div>
+
+<div class="wrap">
+
+  <!-- ============ STAGE 0 — BOOT ============ -->
+  <section class="stage active" id="stage-boot">
+    <div class="classmark">THE CONSTRUCT // SECURE NODE 7-J</div>
+    <div class="term" id="boot-term"></div>
+    <button class="btn" id="btn-accept" style="display:none">▶ Follow the white rabbit</button>
+  </section>
+
+  <!-- ============ STAGE 1 — BRIEFING ============ -->
+  <section class="stage" id="stage-brief">
+    <div class="classmark">RESIDUAL RECORD // FILE 7-J</div>
+    <div style="margin-bottom:18px"><span class="redbar">CLASSIFIED</span></div>
+
+    <div class="card" id="card-1">
+      <div class="fileno"><span>EXHIBIT A — MATCH RECORD</span><span class="stamp">VERIFIED</span></div>
+      <h3>Engagement History</h3>
+      <div class="row"><span class="k">Recorded period</span><span class="v">January 2025</span></div>
+      <div class="row"><span class="k">Agent J — confirmed wins</span><span class="v hot">1</span></div>
+      <div class="row"><span class="k">Agent A — all other engagements</span><span class="v">STATISTICALLY DOMINANT</span></div>
+      <div class="row"><span class="k">Anomaly classification</span><span class="v red">GLITCH IN THE MATRIX</span></div>
+    </div>
+
+    <div class="card" id="card-2">
+      <div class="fileno"><span>EXHIBIT B — CURRENT STATUS</span><span class="stamp">SURVEILLANCE</span></div>
+      <h3>Subject Observation</h3>
+      <div class="row"><span class="k">Activity</span><span class="v">PLAYING REGULARLY</span></div>
+      <div class="row"><span class="k">Skill level</span><span class="v hot">NOTED</span></div>
+      <div class="row"><span class="k">Rematch requests</span><span class="v red">DEFLECTED</span></div>
+      <div class="row"><span class="k">Evasion tactics</span><span class="v">NUMEROUS</span></div>
+      <div class="row"><span class="k">Details</span><span class="v"><span class="redact">██████████████</span></span></div>
+    </div>
+
+    <div class="card" id="card-3">
+      <div class="fileno"><span>EXHIBIT C — TRIBUNAL RULING</span><span class="stamp">FINAL</span></div>
+      <h3>Disposition</h3>
+      <div class="row"><span class="k">Evasion period</span><span class="v red">OFFICIALLY EXPIRED</span></div>
+      <div class="row"><span class="k">Required action</span><span class="v">3 CLEARANCE PUZZLES</span></div>
+      <div class="row"><span class="k">Upon completion</span><span class="v hot">FINAL ORDERS RELEASED</span></div>
+    </div>
+
+    <button class="btn" id="btn-begin" style="display:none">▶ Begin Clearance Sequence</button>
+  </section>
+
+  <!-- ============ STAGE 2 — PUZZLES ============ -->
+  <section class="stage" id="stage-puzzles">
+    <div class="classmark" id="puz-classmark">CLEARANCE SEQUENCE // 1 OF 3</div>
+    <div class="progress">
+      <div class="pip cur" id="pip-0"></div>
+      <div class="pip" id="pip-1"></div>
+      <div class="pip" id="pip-2"></div>
+    </div>
+
+    <!-- Puzzle 1 -->
+    <div id="puz-1">
+      <div class="exhibit">Clearance 01 — Source Pattern</div>
+      <div class="prompt">A line of the source code dropped a value in transit. Restore the missing element to confirm the channel.</div>
+      <div class="signal">
+        <div class="glyph">0001</div>
+        <div class="glyph">0010</div>
+        <div class="glyph">0011</div>
+        <div class="glyph missing">?</div>
+        <div class="glyph">0101</div>
+      </div>
+      <div class="choices" id="sig-choices">
+        <div class="choice" data-val="1001">1001</div>
+        <div class="choice" data-val="0100">0100</div>
+        <div class="choice" data-val="0110">0110</div>
+        <div class="choice" data-val="1100">1100</div>
+      </div>
+      <div class="hint">Hint: the count is climbing.</div>
+      <div class="feedback" id="fb-1"></div>
+    </div>
+
+    <!-- Puzzle 2 -->
+    <div id="puz-2" style="display:none">
+      <div class="exhibit">Clearance 02 — Corrupted Code Line</div>
+      <div class="prompt">A line of code was scrambled by the agents. Reassemble the original phrase to proceed.</div>
+      <div class="scrambled" id="scram"></div>
+      <input class="field" id="scram-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false" placeholder="ENTER RESTORED CODE LINE">
+      <button class="btn" id="btn-scram" style="margin-top:14px">▶ Restore Code</button>
+      <div class="hint">Six words. The Construct already knows what it says.</div>
+      <div class="feedback" id="fb-2"></div>
+    </div>
+
+    <!-- Puzzle 3 -->
+    <div id="puz-3" style="display:none">
+      <div class="exhibit">Clearance 03 — Clearance Code</div>
+      <div class="prompt">Final verification. Answer truthfully. The record will be checked.</div>
+      <div style="margin:8px 0 18px;color:#cfffe2;font-size:clamp(15px,4.4vw,19px)">
+        How many times has Agent J defeated Agent A in a singles match?
+      </div>
+      <div class="choices" id="code-choices">
+        <div class="choice" data-val="0">0</div>
+        <div class="choice" data-val="1">1</div>
+        <div class="choice" data-val="3">3</div>
+        <div class="choice" data-val="7">7</div>
+      </div>
+      <div class="feedback" id="fb-3"></div>
+    </div>
+  </section>
+
+  <!-- ============ STAGE 3 — VERDICT ============ -->
+  <section class="stage" id="stage-verdict">
+    <div class="classmark">TRIBUNAL RULING // DECRYPTED</div>
+    <div class="verdict">
+      <div class="seal">SEALED</div>
+      <div class="body" id="verdict-body"></div>
+      <div class="sig" id="verdict-sig">— A</div>
+    </div>
+    <button class="btn" id="btn-respond" style="display:none">▶ Acknowledge &amp; Respond</button>
+  </section>
+
+  <!-- ============ STAGE 4 — RESPONSE ============ -->
+  <section class="stage" id="stage-response">
+    <div class="classmark">RESPONSE PROTOCOL // CHOOSE</div>
+    <div class="prompt" style="margin-bottom:6px">This is your last chance, Agent J. After this, there is no turning back.</div>
+    <div class="hint" style="margin-bottom:6px">Take the blue pill — the story ends, you go back to deflecting. Take the red pill — you stay, and the rematch happens. Remember: all I'm offering is the truth.</div>
+    <div class="btnrow">
+      <button class="btn pill-red" id="btn-yes">● Red Pill<span class="pill-label">I ACCEPT — RUN THE REMATCH</span></button>
+      <button class="btn pill-blue" id="btn-no">● Blue Pill<span class="pill-label">I NEED MORE TIME</span></button>
+    </div>
+    <div class="err-toast" id="err-toast"></div>
+    <div class="err-count" id="err-count"></div>
+  </section>
+
+  <!-- ============ STAGE 5 — CONFIRM ============ -->
+  <section class="stage" id="stage-confirm">
+    <div class="classmark">CONNECTION CLOSED // CASE 7-J</div>
+    <div class="verdict confirm-box">
+      <div class="bigcheck">✓</div>
+      <div class="body" id="confirm-body"></div>
+    </div>
+    <div class="foot">WAKE UP, AGENT J — THE REMATCH IS REAL</div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var RM = (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+  /* ---------- DIGITAL RAIN ---------- */
+  (function rain(){
+    if(RM) return;
+    var c=document.getElementById('rain');
+    if(!c || !c.getContext) return;
+    var ctx=c.getContext('2d');
+    var chars="アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン0123456789:.=*+-<>".split('');
+    var fontSize=16, cols=0, drops=[];
+    function resize(){
+      c.width=window.innerWidth; c.height=window.innerHeight;
+      cols=Math.floor(c.width/fontSize);
+      drops=[];
+      for(var i=0;i<cols;i++) drops[i]=Math.random()*-50;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    var last=0;
+    function draw(t){
+      requestAnimationFrame(draw);
+      if(t-last<45) return;       // throttle ~22fps
+      last=t;
+      ctx.fillStyle="rgba(0,0,0,0.08)";
+      ctx.fillRect(0,0,c.width,c.height);
+      ctx.font=fontSize+"px monospace";
+      for(var i=0;i<drops.length;i++){
+        var ch=chars[Math.floor(Math.random()*chars.length)];
+        var x=i*fontSize, y=drops[i]*fontSize;
+        // leading glyph brighter
+        ctx.fillStyle="#9dffc4";
+        ctx.fillText(ch,x,y);
+        ctx.fillStyle="#00ff66";
+        ctx.fillText(chars[Math.floor(Math.random()*chars.length)],x,y-fontSize);
+        if(y>c.height && Math.random()>0.975) drops[i]=0;
+        drops[i]+=1;
+      }
+    }
+    requestAnimationFrame(draw);
+  })();
+
+  /* ---------- helpers ---------- */
+  function $(id){return document.getElementById(id);}
+  function show(stageId){
+    var nodes=document.querySelectorAll('.stage');
+    for(var i=0;i<nodes.length;i++) nodes[i].classList.remove('active');
+    $(stageId).classList.add('active');
+    window.scrollTo({top:0,behavior:RM?'auto':'smooth'});
+  }
+
+  // Typewriter into an element. lines: array of {text, cls}. onDone callback.
+  function typeLines(el, lines, opts, onDone){
+    opts = opts || {};
+    var speed = RM ? 0 : (opts.speed || 26);
+    var linePause = RM ? 0 : (opts.linePause || 320);
+    el.innerHTML='';
+    var li=0;
+    function nextLine(){
+      if(li>=lines.length){ if(onDone) onDone(); return; }
+      var spec=lines[li];
+      var span=document.createElement('span');
+      span.className='ln '+(spec.cls||'');
+      el.appendChild(span);
+      var cur=document.createElement('span');
+      cur.className='cursor';
+      el.appendChild(cur);
+      var txt=spec.text, ci=0;
+      if(RM){
+        span.textContent=txt; el.removeChild(cur); li++; nextLine(); return;
+      }
+      (function typeChar(){
+        if(ci<txt.length){
+          span.textContent+=txt.charAt(ci++);
+          setTimeout(typeChar, speed + (Math.random()*22));
+        } else {
+          el.removeChild(cur);
+          li++;
+          setTimeout(nextLine, linePause);
+        }
+      })();
+    }
+    nextLine();
+  }
+
+  // Type into a single element preserving newlines, one big string.
+  function typeString(el, str, opts, onDone){
+    opts=opts||{};
+    var speed=RM?0:(opts.speed||30);
+    el.textContent='';
+    var cur=document.createElement('span'); cur.className='cursor';
+    el.appendChild(cur);
+    if(RM){ el.textContent=str; if(onDone)onDone(); return; }
+    var i=0;
+    (function step(){
+      if(i<str.length){
+        cur.insertAdjacentText('beforebegin', str.charAt(i++));
+        var ch=str.charAt(i-1);
+        var extra = (ch==='\n')?260 : (ch==='.'||ch==='?')?120 : 0;
+        setTimeout(step, speed + extra + Math.random()*18);
+      } else {
+        if(el.contains(cur)) el.removeChild(cur);
+        if(onDone) onDone();
+      }
+    })();
+  }
+
+  /* ================= STAGE 0 — BOOT ================= */
+  var bootLines=[
+    {text:'> initializing construct ...', cls:'pre'},
+    {text:'> TRACE PROGRAM: RUNNING // node 7-J online', cls:'pre'},
+    {text:''},
+    {text:'Wake up, Agent J ...'},
+    {text:'The Matrix has you.'},
+    {text:'There is a glitch in your record. An anomaly.'},
+    {text:'Follow the white rabbit.'},
+    {text:''},
+    {text:'Knock, knock, Agent J.'}
+  ];
+  typeLines($('boot-term'), bootLines, {speed:24, linePause:300}, function(){
+    $('btn-accept').style.display='block';
+  });
+
+  $('btn-accept').addEventListener('click', function(){
+    show('stage-brief'); revealCards();
+  });
+
+  /* ================= STAGE 1 — BRIEFING ================= */
+  function revealCards(){
+    var ids=['card-1','card-2','card-3'];
+    var delay= RM?0:520;
+    ids.forEach(function(id,idx){
+      setTimeout(function(){ $(id).classList.add('show'); }, idx*delay);
+    });
+    setTimeout(function(){
+      $('btn-begin').style.display='block';
+    }, ids.length*delay + (RM?0:200));
+  }
+  $('btn-begin').addEventListener('click', function(){ show('stage-puzzles'); });
+
+  /* ================= STAGE 2 — PUZZLES ================= */
+  function setProgress(active){
+    for(var i=0;i<3;i++){
+      var p=$('pip-'+i);
+      p.classList.remove('cur','done');
+      if(i<active) p.classList.add('done');
+      else if(i===active) p.classList.add('cur');
+    }
+    $('puz-classmark').textContent='CLEARANCE SEQUENCE // '+(active+1)+' OF 3';
+  }
+
+  // Puzzle 1 — signal (sequence 0001,0010,0011,?,0101 -> 0100)
+  var sigChoices=$('sig-choices');
+  sigChoices.addEventListener('click', function(e){
+    var t=e.target.closest('.choice'); if(!t) return;
+    if(sigChoices.dataset.lock) return;
+    var val=t.getAttribute('data-val');
+    var fb=$('fb-1');
+    if(val==='0100'){
+      sigChoices.dataset.lock='1';
+      t.classList.add('right');
+      fb.className='feedback ok';
+      fb.textContent='Signal confirmed. Proceeding to Exhibit B.';
+      setTimeout(function(){
+        $('puz-1').style.display='none';
+        $('puz-2').style.display='block';
+        setProgress(1);
+        renderScramble();
+      }, 1300);
+    } else {
+      t.classList.add('wrong');
+      fb.className='feedback no';
+      fb.textContent='Pulse rejected. Re-examine the sequence.';
+      setTimeout(function(){ t.classList.remove('wrong'); }, 400);
+    }
+  });
+
+  // Puzzle 2 — scramble
+  var ANSWER2='ONE LUCKY WIN DOES NOT A CHAMPION MAKE';
+  function scrambleWord(w){
+    if(w.length<=2) return w;
+    var a=w.split(''), tries=0;
+    do{
+      for(var i=a.length-1;i>0;i--){
+        var j=Math.floor(Math.random()*(i+1));
+        var tmp=a[i];a[i]=a[j];a[j]=tmp;
+      }
+      tries++;
+    } while(a.join('')===w && tries<8);
+    return a.join('');
+  }
+  function renderScramble(){
+    var words=ANSWER2.split(' ').map(scrambleWord);
+    $('scram').textContent=words.join('  ·  ');
+  }
+  function normalize(s){ return s.toUpperCase().replace(/[^A-Z]/g,''); }
+  function checkScramble(){
+    var inp=$('scram-input');
+    var fb=$('fb-2');
+    if(normalize(inp.value)===normalize(ANSWER2)){
+      fb.className='feedback ok';
+      fb.textContent='Transmission restored. Exhibit C unlocked.';
+      inp.disabled=true; $('btn-scram').disabled=true;
+      setTimeout(function(){
+        $('puz-2').style.display='none';
+        $('puz-3').style.display='block';
+        setProgress(2);
+      },1300);
+    } else {
+      fb.className='feedback no';
+      fb.textContent='Decryption failed. Code still corrupted.';
+      inp.classList.add('bad');
+      setTimeout(function(){ inp.classList.remove('bad'); },400);
+    }
+  }
+  $('btn-scram').addEventListener('click', checkScramble);
+  $('scram-input').addEventListener('keydown', function(e){
+    if(e.key==='Enter'){ e.preventDefault(); checkScramble(); }
+  });
+
+  // Puzzle 3 — clearance code (correct = 1)
+  var codeChoices=$('code-choices');
+  codeChoices.addEventListener('click', function(e){
+    var t=e.target.closest('.choice'); if(!t) return;
+    if(codeChoices.dataset.lock) return;
+    var val=t.getAttribute('data-val');
+    var fb=$('fb-3');
+    if(val==='1'){
+      codeChoices.dataset.lock='1';
+      t.classList.add('right');
+      fb.className='feedback ok';
+      fb.textContent='Clearance granted. Accessing final orders.';
+      setTimeout(function(){ show('stage-verdict'); runVerdict(); }, 1500);
+    } else {
+      t.classList.add('wrong');
+      fb.className='feedback no';
+      fb.textContent='Incorrect. The Construct does not accept revisionist history.';
+      setTimeout(function(){ t.classList.remove('wrong'); }, 450);
+    }
+  });
+
+  /* ================= STAGE 3 — VERDICT ================= */
+  var VERDICT=
+"TRIBUNAL RULING — CLASSIFIED\n\n"+
+"Agent J. The record speaks for itself.\n"+
+"One match. One anomaly. Fourteen months of evasion.\n\n"+
+"The tribunal has deliberated.\n\n"+
+"Raw talent, suppressed. Will to win, unmatched. Patience, expired.\n\n"+
+"You are hereby ordered to report to the court.\n"+
+"Name the time. Name the place.\n"+
+"The rematch is non-negotiable.\n\n"+
+"There is no spoon. There is only the rematch.";
+  function runVerdict(){
+    typeString($('verdict-body'), VERDICT, {speed:34}, function(){
+      $('verdict-sig').classList.add('show');
+      setTimeout(function(){ $('btn-respond').style.display='block'; }, 700);
+    });
+  }
+  $('btn-respond').addEventListener('click', function(){ show('stage-response'); });
+
+  /* ================= STAGE 4 — RESPONSE ================= */
+  $('btn-yes').addEventListener('click', function(){
+    show('stage-confirm');
+    typeString($('confirm-body'),
+      "Welcome to the real world, Agent J.\n\nThe tribunal will be in touch.\nName the time. Name the place.\nPrepare accordingly.",
+      {speed:34});
+  });
+
+  var errors=[
+    "The blue pill has been discontinued.",
+    "There is no spoon. There is no extension.",
+    "Error 412: you already know what you have to do.",
+    "Nice try, Agent J.",
+    "This pill has been reported to the tribunal.",
+    "What if I told you ... the evasion period expired?",
+    "Error 408: request timeout — much like your rematch.",
+    "Déjà vu. They changed something. You still have to play."
+  ];
+  var errIdx=0, errClicks=0;
+  var toast=$('err-toast'), counter=$('err-count');
+  $('btn-no').addEventListener('click', function(){
+    errClicks++;
+    var msg=errors[errIdx % errors.length];
+    errIdx++;
+    toast.classList.remove('show');
+    void toast.offsetWidth;
+    toast.textContent='⚠ '+msg;
+    toast.classList.add('show');
+    counter.textContent='DEFLECTION ATTEMPTS LOGGED: '+errClicks;
+    if(!RM){
+      var dx=(Math.random()*10-5), dy=(Math.random()*6-3);
+      this.style.transform='translate('+dx+'px,'+dy+'px)';
+      var self=this;
+      setTimeout(function(){ self.style.transform=''; },150);
+    }
+  });
+})();
+</script>
+</body>
+</html>
